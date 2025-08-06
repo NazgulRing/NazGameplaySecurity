@@ -43,7 +43,7 @@ app.get("/guilds", (req, res) => {
 
 
 
-// ---------- Kommando-registrering ----------
+// ---------- Load Commands ----------
 const updateCommands = require("./register-commands");
 
 client.commands = new Collection();
@@ -66,7 +66,7 @@ for (const folder of commandFolders) {
   }
 }
 
-// ---------- Event-registrering ----------
+// ---------- Load Events ----------
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith(".js"));
 
@@ -80,7 +80,7 @@ for (const file of eventFiles) {
   }
 }
 
-// ---------- InteractionCreate: logg kommando-bruk ----------
+// ---------- InteractionCreate: log commands usage ----------
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -147,7 +147,7 @@ client.on(Events.GuildMemberAdd, async (member) => {
 });
 
 // ---------- Keep Alive og Oppstart ----------
-const keepAlive = require("../server/routes/server");
+const keepAlive = require("../server/server");
 
 client.once("ready", async () => {
   console.log("🤖 Bot er online!");

@@ -4,8 +4,6 @@ const path     = require("node:path");
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
-
-
 function keepAlive(client, app) {
   /* 1️⃣  – Statiske React‑filer  */
   app.use(express.static(path.join(__dirname, "client", "build")));
