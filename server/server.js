@@ -56,7 +56,7 @@ function keepAlive(client, app) {
   });
 
   /* 3️⃣  – Catch‑all: send React index.html */
-  const indexPath = path.join(__dirname, "client", "build", "index.html");
+  const indexPath = path.join(__dirname, "../../client/build", "index.html");
   app.get("*", (req, res) => {
     res.sendFile(indexPath, err => {
       if (err) {
