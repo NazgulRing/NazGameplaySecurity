@@ -29,7 +29,7 @@ app.use(express.json());
 
 
 // Settings Router
-const settingsRouter = require("./settingsRouter")(client);
+const settingsRouter = require("../server/routes/settings")(client);
 app.use("/settings", settingsRouter);
 
 // Endpoint: Hent alle guilds botten er i
@@ -147,7 +147,7 @@ client.on(Events.GuildMemberAdd, async (member) => {
 });
 
 // ---------- Keep Alive og Oppstart ----------
-const keepAlive = require("./server");
+const keepAlive = require("../server/routes/server");
 
 client.once("ready", async () => {
   console.log("🤖 Bot er online!");
