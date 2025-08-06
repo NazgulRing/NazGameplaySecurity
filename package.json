@@ -1,0 +1,66 @@
+{
+
+    "name": "discordbot",
+
+    "version": "1.0.0",
+
+    "main": "index.js",
+
+    "scripts": {
+
+        "test": "echo \"Error: no test specified\" && exit 1",
+
+        "start:bot": "node index.js",
+
+        "start:client": "npm start --prefix client",
+
+        "start": "concurrently \"npm run start:bot\" \"npm run start:client\""
+
+    },
+
+    "keywords": [],
+
+    "author": "MLD",
+
+    "license": "ISC",
+
+    "dependencies": {
+
+        "@discordjs/builders": "github:discordjs/builders",
+
+        "better-sqlite3": "^11.1.2",
+
+        "const-ms": "^1.0.4",
+
+        "discord-api-types": "^0.37.93",
+
+        "discord-builder": "^1.1.5",
+
+        "discord-player": "^6.7.1",
+
+        "discord.js": "^14.12.1",
+
+        "dotenv": "^16.4.5",
+
+        "express": "^4.18.2",
+
+        "ms": "^2.1.3",
+
+        "nodemon": "^3.1.0",
+
+        "quick.db": "^9.1.7"
+
+    },
+
+    "devDependencies": {
+
+        "concurrently": "^9.1.2",
+
+        "eslint": "^9.8.0"
+
+    },
+
+    "description": ""
+
+}
+
