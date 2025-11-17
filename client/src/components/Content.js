@@ -1,13 +1,9 @@
 import '../imports.js';
-const innerContent = () =>{
+const Content = () =>{
   return(
-  <innerContent>
     <section className='ct-section'>
       <div className='w-full centered'></div>
         </section>
-  </innerContent>
 )
 }
-
-
-export default innerContent;
+export default Content;

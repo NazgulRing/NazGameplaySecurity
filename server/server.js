@@ -1,7 +1,9 @@
+const { cli } = require("discord-builder");
 const { ChannelType, EmbedBuilder } = require("discord.js");
 const express  = require("express");
 const path     = require("node:path");
 const { QuickDB } = require("quick.db");
+const { name } = require("../bot/events/ready");
 const db = new QuickDB();
 
 function keepAlive(client, app) {
@@ -53,6 +55,19 @@ function keepAlive(client, app) {
       console.error("Error handling /event:", error);
       res.status(500).json({ error: "Internal server error" });
     }
+  });
+
+
+  app.get("/api/commands", (req,res) =>{
+    if (!client || !client.commands){
+      return res.status(500).json({error: "Kommandoer ikke tilgjengelig"});
+    }
+    const commands = client.commands.map(cmd =>({
+      name: cmd.data.name,
+      description: cmd.data.description,
+    }));
+
+    res.json(commands)
   });
 
   /* 3️⃣  – Catch‑all: send React index.html */

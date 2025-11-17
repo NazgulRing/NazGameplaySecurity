@@ -1,6 +1,6 @@
-import Hero from './components/hero';
-import Footer from './components/footer';
-import InnerContent from './components/innerContent';
+import Hero from './components/Hero';
+import Footer from './components/Footer';
+import InnerContent from './components/Content';
 
 function App() {
   return (
@@ -9,7 +9,9 @@ function App() {
         <Hero className="w-full"/>
       </header>
       <main>
-        <InnerContent className="ct-section"></InnerContent>
+        <InnerContent className="ct-section">
+          <div></div>
+        </InnerContent>
       </main>
       <Footer/>
     </div>

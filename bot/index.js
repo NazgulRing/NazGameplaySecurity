@@ -170,7 +170,7 @@ client.once("ready", async () => {
   }, 30 * 60 * 1000); // hver 30. minutt
 
   keepAlive(client, app);
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => console.log(`✅ Express-server kjører på port ${PORT}`));
   
 });
