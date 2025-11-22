@@ -9,9 +9,10 @@ function MemberList() {
 
   useEffect(() => {
     if (!guildID) return;
+    console.log("Henter medlemmer for guildID:", guildID);
 
     setLoading(true);
-    fetch(`/settings/members/${guildID}`)
+    fetch(`/api/members/${guildID}`)
       .then(res => {
         if (!res.ok) throw new Error("Feil ved henting av medlemmer");
         return res.json();

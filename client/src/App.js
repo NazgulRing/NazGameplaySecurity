@@ -1,6 +1,7 @@
 import Hero from './components/Hero';
 import Footer from './components/Footer';
-import InnerContent from './components/Content';
+import GuildsButton from './components/GuildsButtons';
+import InnerContent from './components/InnerContent';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
       </header>
       <main>
         <InnerContent className="ct-section">
-          <div></div>
+          <div><GuildsButton/></div>
         </InnerContent>
       </main>
       <Footer/>

@@ -79,7 +79,7 @@ router.get('/settings/:guildID', async (req, res) => {
     if (!guild) return res.status(404).json({ error: "Guild not found" });
 
     try {
-      await guild.members.fetch({ withPresences: false });
+      await guild.members.fetch();
       const members = guild.members.cache.map(m => ({
         id: m.id,
         username: m.user.username,

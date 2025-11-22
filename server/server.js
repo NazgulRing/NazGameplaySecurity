@@ -1,15 +1,20 @@
-const { cli } = require("discord-builder");
 const { ChannelType, EmbedBuilder } = require("discord.js");
 const express  = require("express");
 const path     = require("node:path");
+const cors = require('cors');
 const { QuickDB } = require("quick.db");
 const { name } = require("../bot/events/ready");
 const db = new QuickDB();
+const createSettingsRouter = require("./routes/settings");
+
 
 function keepAlive(client, app) {
+  /*Allows for front to get data from port 3001*/
+  app.use(cors({ origin: 'http://localhost:3000' }));
+    app.use(express.json());
   /* 1️⃣  – Statiske React‑filer  */
+  app.use("/api", createSettingsRouter(client));
   app.use(express.static(path.join(__dirname, "client", "build")));
-
   app.get("/api/guilds", (req, res) => {
     if (!client) return res.status(500).json({ error: "Client ikke tilgjengelig" });
 
@@ -70,7 +75,7 @@ function keepAlive(client, app) {
     res.json(commands)
   });
 
-  /* 3️⃣  – Catch‑all: send React index.html */
+  /* 3️⃣  – Catch‑all: send React index.html *//*
   const indexPath = path.join(__dirname, "../../client/build", "index.html");
   app.get("*", (req, res) => {
     res.sendFile(indexPath, err => {
@@ -79,7 +84,7 @@ function keepAlive(client, app) {
         res.status(500).send("Internal server error");
       }
     });
-  });
+  });*/
 }
 
 module.exports = keepAlive;

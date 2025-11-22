@@ -30,10 +30,10 @@ app.use(express.json());
 
 // Settings Router
 const settingsRouter = require("../server/routes/settings")(client);
-app.use("/settings", settingsRouter);
+app.use("/api", settingsRouter);
 
 // Endpoint: Hent alle guilds botten er i
-app.get("/guilds", (req, res) => {
+app.get("/api/guilds", (req, res) => {
   if (!client || !client.isReady()) {
     return res.status(500).json({ error: "Discord-klienten er ikke klar" });
   }
@@ -176,5 +176,5 @@ client.once("ready", async () => {
 });
 
 // ---------- Start Discord-bot ----------
-client.login(process.env.token);
+client.login(process.env.TOKEN);
 module.exports = client;
