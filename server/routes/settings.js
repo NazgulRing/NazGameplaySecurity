@@ -15,11 +15,13 @@ router.get('/settings/:guildID', async (req, res) => {
     const eventChannel = await db.get(`setEventChannel_${guildID}`);
     const welcomeChannel = await db.get(`setWelcomeChannel_${guildID}`);
     const autoRole = await db.get(`autorole_${guildID}`);
+    const botRole = await db.get(`botrole_${guildID}`);
 
     res.json({
       eventChannelID: eventChannel || null,
       welcomeChannelID: welcomeChannel || null,
       autoroleID: autoRole || null,
+      botroleID: botRole || null,
     });
   } catch (err) {
     res.status(500).json({ error: 'Kunne ikke hente innstillinger', details: err.message });
@@ -54,6 +56,21 @@ router.get('/settings/:guildID', async (req, res) => {
     const { guildID, roleID } = req.body;
     if (!guildID || !roleID) return res.status(400).json({ error: "guildID and roleID required" });
     await db.set(`autorole_${guildID}`, roleID);
+    res.json({ success: true });
+  });
+
+  // Get bot role
+  router.get('/botrole/:guildID', async (req, res) => {
+    const roleID = await db.get(`botrole_${req.params.guildID}`);
+    if (!roleID) return res.status(404).json({ error: "Bot role not set" });
+    res.json({ roleID });
+  });
+
+  // Set bot role
+  router.post('/botrole', async (req, res) => {
+    const { guildID, roleID } = req.body;
+    if (!guildID || !roleID) return res.status(400).json({ error: "guildID and roleID required" });
+    await db.set(`botrole_${guildID}`, roleID);
     res.json({ success: true });
   });
 
@@ -119,6 +136,11 @@ router.get('/settings/:guildID', async (req, res) => {
       res.status(500).json({ error: "Feil ved henting av timeout-status", details: err.message });
     }
   });
+
+  router.post('/log-animation', async (req, res) => {
+  console.log("✅ Animasjonsside startet!");
+  res.json({ success: true });
+});
 
   return router;
 }

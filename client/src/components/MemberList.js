@@ -37,7 +37,7 @@ function MemberList() {
           <img
             src={member.avatar}
             alt={member.username}
-            style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8 }}
+            style={{ width: 64, height: 64, borderRadius: "50%", marginRight: 8 }}
           />
           {member.username}#{member.tag}
         </li>

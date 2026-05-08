@@ -40,7 +40,7 @@ function GuildsButton() {
   return (
     <div>
       <button onClick={fetchGuilds} disabled={loading}>
-        {loading ? 'Laster...' : 'Hent servere'}
+        {loading ? 'Loading...' : 'Get Servers'}
       </button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -57,18 +57,17 @@ function GuildsButton() {
 
       {selectedGuild && (
         <div>
-          <h3>Medlemmer i valgt server:</h3>
+          <h3>Members:</h3>
           <ul>
             {members.map(member => (
               <li key={member.id}>
-                <img
+                <div class="auto-grid-2 w-1by3"><div><img class="rounded-full"
                   src={member.avatar}
                   alt={member.username}
-                  width={32}
-                  height={32}
-                  style={{ borderRadius: '50%', marginRight: '8px' }}
-                />
-                {member.username}#{member.tag.split('#')[1]}
+                  width={64}
+                  height={64}
+                /></div>
+                <div><p>{member.username}#{member.tag.split('#')[1]}</p></div></div>
               </li>
             ))}
           </ul>

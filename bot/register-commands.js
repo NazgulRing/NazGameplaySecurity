@@ -26,7 +26,7 @@ async function updateCommands(client) {
 
 
 
-	const rest = new REST({ version: "10" }).setToken(process.env["token"]);
+	const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
 
 	try{
@@ -41,13 +41,13 @@ async function updateCommands(client) {
 
 	for (const guildId of guildIds) {
 			await rest.put(
-				Routes.applicationCommands(process.env["CLIENT_ID"], guildId), 
+				Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
 				{ body: commands });
 				console.log(`Successfully reloaded commands for guild: ${guildId}`);
 			}
 			console.log("Successfully reloaded application (/) commands for all guilds.");
 		} catch (error) {
-			console.log(`There was an error: ${error}`);
+			console.error("There was an error while refreshing application commands:", error);
 		}
 	}
 

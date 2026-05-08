@@ -13,7 +13,9 @@ function keepAlive(client, app) {
   app.use(cors({ origin: 'http://localhost:3000' }));
     app.use(express.json());
   /* 1️⃣  – Statiske React‑filer  */
+
   app.use("/api", createSettingsRouter(client));
+  /*Run the Case animasjon site */
   app.use(express.static(path.join(__dirname, "client", "build")));
   app.get("/api/guilds", (req, res) => {
     if (!client) return res.status(500).json({ error: "Client ikke tilgjengelig" });
@@ -27,6 +29,7 @@ function keepAlive(client, app) {
   });
 
   /* 2️⃣  – API‑endepunkter (legg flere før catch‑all) */
+
   app.post("/event", async (req, res) => {
     try {
       const { guildID, title, description, date } = req.body;

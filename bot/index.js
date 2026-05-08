@@ -135,13 +135,35 @@ client.on(Events.GuildMemberAdd, async (member) => {
   }
 
   // Auto role
-  const roleID = await db.get(`autorole_${guild.id}`);
-  const role = guild.roles.cache.get(roleID);
+  const isBot = member.user.bot;
+  const roleID = isBot
+    ? await db.get(`botrole_${guild.id}`)
+    : await db.get(`autorole_${guild.id}`);
+  const role = roleID
+    ? await guild.roles.fetch(roleID).catch(() => null)
+    : isBot
+      ? guild.roles.cache.find((guildRole) => guildRole.name.toLowerCase().includes("bot"))
+      : null;
+
+  console.log(
+    `[autorole] ${member.user.tag} (${member.id}) joined ${guild.name}. isBot=${isBot}, roleID=${roleID || "none"}, role=${role ? `${role.name} (${role.id})` : "none"}`,
+  );
+
+  if (isBot && !role) {
+    console.warn(
+      `[autorole] No bot role found for ${guild.name}. Set one with /botrole, or create a role with "bot" in the name.`,
+    );
+    return;
+  }
+
   if (role) {
     try {
       await member.roles.add(role);
+      console.log(`[autorole] Added ${role.name} to ${member.user.tag}`);
     } catch (err) {
-      console.error(`Kunne ikke tildele rolle: ${err.message}`);
+      console.error(
+        `[autorole] Kunne ikke tildele ${role.name} til ${member.user.tag}: ${err.message}`,
+      );
     }
   }
 });
