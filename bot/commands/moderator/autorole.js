@@ -3,6 +3,7 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("autorole")
     .setDescription("Set auto join role")

@@ -3,6 +3,7 @@ const { QuickDB } = require("quick.db");
 const { execute } = require("./clearwarnings");
 const db = new QuickDB();
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("setlogchat")
     .setDescription("Set log channel")

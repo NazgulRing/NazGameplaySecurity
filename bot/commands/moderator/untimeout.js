@@ -2,6 +2,7 @@ const { SlashCommandBuilder, embedLength } = require("discord.js");
 const { PermissionsBitField, EmbedBuilder } = require("discord.js");
 
 module.exports ={
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("untimeout")
     .setDescription("Untimes out a user")

@@ -1,49 +1,94 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import "../styles/variables.css";
+import "../styles/utility.css";
+import "../styles/memberlist.css"; 
+import React, { useEffect, useState } from "react"; 
 
-function MemberList() {
-  const { guildID } = useParams(); // henter guildID fra URL
-  const [members, setMembers] = useState([]);
+
+function MemberList({ guildID }){
+  const [members, setMembers] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1); 
+
+  const MEMBERS_PER_PAGE = 10;
   useEffect(() => {
     if (!guildID) return;
-    console.log("Henter medlemmer for guildID:", guildID);
+    
+    async function fetchMembers() { 
+    try {
+      setLoading(true); 
+      
+      const response = await fetch(
+        `http://localhost:3001/api/members/${guildID}`
+      ); 
 
-    setLoading(true);
-    fetch(`/api/members/${guildID}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Feil ved henting av medlemmer");
-        return res.json();
-      })
-      .then(data => {
-        setMembers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [guildID]);
+      const data = await response.json(); 
 
-  if (loading) return <div>Laster medlemmer...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
+      setMembers(data); 
+    } catch (err) { 
+      console.error(err);
+     } finally { 
+      setLoading(false); 
+    } 
+  } 
 
-  return (
-    <ul>
-      {members.map((member) => (
-        <li key={member.id} style={{ marginBottom: "10px", display: 'flex', alignItems: 'center' }}>
-          <img
-            src={member.avatar}
-            alt={member.username}
-            style={{ width: 64, height: 64, borderRadius: "50%", marginRight: 8 }}
-          />
-          {member.username}#{member.tag}
-        </li>
-      ))}
-    </ul>
+  fetchMembers();
+}, [guildID]);
+
+  const indexOfLastMember = currentPage * MEMBERS_PER_PAGE; 
+  const indexOfFirstMember = indexOfLastMember - MEMBERS_PER_PAGE; 
+
+  const currentMembers = members.slice(
+    indexOfFirstMember, indexOfLastMember 
   );
-}
 
-export default MemberList;
+  const totalPages = Math.ceil(
+    members.length / MEMBERS_PER_PAGE
+  ); 
+
+  if (loading) { 
+    return <p>Loading members...</p>;
+  }
+  
+  return (
+  <div className="members-section">
+    <h3>Members</h3>
+
+    <ul className="member-list"> 
+      {currentMembers.map((member) => (
+        <li key={member.id} className="member-card">
+          <img 
+          src={member.avatar} 
+          alt={member.username}
+          /> 
+          <div>
+            <strong>{member.username}</strong> 
+            <span>{member.tag}</span> 
+            </div> 
+          </li>
+        ))}
+        </ul>
+        
+        <div className="pagination"> 
+            <button
+            disabled={currentPage === 1}
+            onClick={() => 
+            setCurrentPage((prev) => prev - 1)
+            } 
+            > Previous </button> 
+            <span>
+              Page {currentPage} / {totalPages}
+            </span> 
+            
+            <button disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => prev + 1)
+            } 
+            > 
+            Next
+            </button>
+            </div>
+            </div>
+            ); 
+} 
+  export default MemberList;

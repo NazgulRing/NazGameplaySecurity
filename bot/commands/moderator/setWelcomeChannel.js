@@ -3,6 +3,7 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("setwelcomechannel")
     .setDescription("Set welcome channel")
@@ -18,7 +19,35 @@ module.exports = {
 
     const channel = interaction.options.getChannel("channel", true);
 
-    await db.set(`setWelcomeChannel_${interaction.guild.id}`, channel.id)
+    const current =
+  await db.get(
+    `welcomeSettings_${interaction.guild.id}`
+  ) || {};
+
+await db.set(
+  `welcomeSettings_${interaction.guild.id}`,
+  {
+    enabled: true,
+
+    title:
+      current.title || "Velkommen!",
+
+    message:
+      current.message ||
+      "{user} har blitt med i serveren.",
+
+    color:
+      current.color || "#57F287",
+
+    thumbnail:
+      current.thumbnail || "",
+
+    mention:
+      current.mention ?? true,
+
+    channelID: channel.id,
+  }
+);
 
     const embed = new EmbedBuilder()
       .setColor("Blue")

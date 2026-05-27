@@ -1,9 +1,9 @@
-// Content.js
-import '../imports.js';
+import "../styles/variables.css";
+import "../styles/utility.css";
 
 const InnerContent = ({ children }) => {
   return (
-    <section className="ct-section">
+    <section className="section">
       <div className="w-full">
         {children} {/* Alt innhold sendes inn her */}
       </div>

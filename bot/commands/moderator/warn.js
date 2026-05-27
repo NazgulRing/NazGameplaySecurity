@@ -4,6 +4,7 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("warn")
     .setDescription("Warn a user about something they did")
@@ -44,6 +45,16 @@ module.exports = {
     await member.send({ embeds: [dmEmbed] }).catch(err => {
       return;
     });
-    db.add(`warns_${member}`, 1);
+    await db.add(`warns_${member}`, 1);
+
+    const warningKey = `warnDetails_${interaction.guild.id}_${member.id}`;
+    const warnings = (await db.get(warningKey)) || [];
+    warnings.push({
+      reason,
+      moderatorId: interaction.user.id,
+      moderatorTag: interaction.user.tag,
+      createdAt: new Date().toISOString(),
+    });
+    await db.set(warningKey, warnings);
   },
 };

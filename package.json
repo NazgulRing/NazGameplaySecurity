@@ -6,7 +6,6 @@
 
     "main": "index.js",
 
-
     "scripts": {
 
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -29,7 +28,15 @@
 
         "@discordjs/builders": "github:discordjs/builders",
 
+        "@napi-rs/canvas": "^1.0.0",
+
+        "axios": "^1.16.0",
+
         "better-sqlite3": "^11.1.2",
+
+        "canvacord": "^6.0.4",
+
+        "canvas": "^3.2.3",
 
         "const-ms": "^1.0.4",
 
@@ -61,7 +68,9 @@
 
         "concurrently": "^9.1.2",
 
-        "eslint": "^9.8.0"
+        "eslint": "^9.8.0",
+
+        "prettier": "3.8.3"
 
     },
 

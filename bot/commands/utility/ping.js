@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
+    category: "Utility",
   // Define the slash command data with command name and description
   data: new SlashCommandBuilder()
 	// The command name users type: /ping

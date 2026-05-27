@@ -1,27 +1,19 @@
-import '../imports.js';
+import "../styles/footer.css";
+import "../styles/variables.css";
+import "../styles/utility.css";
 const Footer = () => {
   return(
-  <footer className='footer-section'>
-    <div className='footer-inner-wrap'>
-      <div className='grid-cols-3 gap-8 grid w-full'>
-        <div className='col-span-2 flex flex-col'>
-          <div className=' grid-cols-4 gap-8 grid md-grid-cols-2 mb-12 justify-start'>
-            <div className='col-span-2 ct-div-block'>
-              <h4 id="heading-h4"className='color-light'>NazServers</h4>
-            </div>
-          <div className='ct-div-block'>
-            
-          </div>
-            <div className='ct-div-block'>
-              <div className='color-light mb-2 font-semibold'>Kontakt</div>
-              <a href="mailto:matasmyh@hotmail.no"className='color-light mb-2 hover-color-primary'>matasmyh@hotmail.no</a>
-              <a href="tel:97325492"className='mb-2 color-light hover-color-primary'>97325492</a>
-            </div>
-            </div>
-            </div>
-            <div className='code-block p-8 color-light'></div>
-            </div>
-            </div>
+  <footer className='footer'>
+    <div className="footer-container">
+      <div className="footer-left">
+        <h4>NazServers</h4>
+      </div>
+      <div className="footer-contact">
+        <h5>Kontakt</h5>
+        <a href="mailto:matasmyh@hotmail.no">matasmyh@hotmail.no</a>
+        <a href="tel:97325492">97325492</a>
+      </div>
+    </div>
   </footer>
   )
 }

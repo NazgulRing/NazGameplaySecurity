@@ -13,6 +13,7 @@ const riddles = [
 ];
 
 module.exports = {
+    category: "Utility",
   data: new SlashCommandBuilder()
     .setName('riddle')          // Command name: /riddle
     .setDescription('Random riddle'), // Command description

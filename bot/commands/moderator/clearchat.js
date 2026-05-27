@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const { PermissionsBitField, EmbedBuilder } = require("discord.js");
 
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("clear")
     .setDescription("Clear an amount of chat permited")

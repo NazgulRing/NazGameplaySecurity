@@ -4,6 +4,7 @@ const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
 module.exports = {
+   category: "Moderation",
   data: new SlashCommandBuilder()
     .setName("clearwarns")
     .setDescription("Clear a members warnings")
@@ -39,6 +40,9 @@ module.exports = {
       });
 
     let afwarns = await db.sub(`warns_${member}`, warnNum);
+    const warningKey = `warnDetails_${interaction.guild.id}_${member.id}`;
+    const warningDetails = (await db.get(warningKey)) || [];
+    await db.set(warningKey, warningDetails.slice(0, Math.max(warningDetails.length - warnNum, 0)));
 
     const embed = new EmbedBuilder()
       .setColor("Blue")

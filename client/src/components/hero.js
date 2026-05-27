@@ -1,12 +1,19 @@
+import "../styles/hero.css";
+import "../styles/variables.css";
+import "../styles/utility.css";
 import hero from '../assets/Background.png';
 import logotxt from '../assets/logotxt.png';
-import '../imports.js';
+
 const Hero = () =>{
   return(
-      <div className="w-full hero">
-          <img src={hero} className="w-full hero-img" alt="hero" />
-          <img className="hero-txt" src={logotxt} alt="herotxt"></img>
-          </div>
+    <section className='hero'>
+      <img src={hero} className='hero-image' alt="heroimg"></img>
+      <div className='hero-overlay'></div>
+      <div className='hero-content'>
+        <img src={logotxt} alt="NazServers" className='hero-logo'></img>
+      </div>
+    </section>
+
   )
 }
 

@@ -1,0 +1,62 @@
+.commands-section{
+  width:100%;
+}
+
+.commands-list{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap:16px;
+
+  list-style:none;
+
+  padding:0;
+  margin:0;
+}
+
+.commands-list li{
+  background:#f8fafc;
+
+  border-radius:18px;
+
+  padding:18px;
+
+  transition:0.2s ease;
+
+  border:1px solid transparent;
+}
+
+.commands-list li:hover{
+  background:white;
+
+  border-color:#e5e7eb;
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.08);
+}
+
+.commands-list strong{
+  display:block;
+
+  margin-bottom:8px;
+
+  font-size:15px;
+}
+
+.commands-list span{
+  color:#667085;
+
+  line-height:1.5;
+}
+
+@media(max-width:900px){
+
+  .commands-list{
+    grid-template-columns:1fr;
+  }
+
+}
