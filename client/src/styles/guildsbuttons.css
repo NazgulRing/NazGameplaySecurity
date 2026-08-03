@@ -1,5 +1,60 @@
+/*dashboard*/
 .dashboard-shell {
     width: 100%;
+}
+
+.dashboard-alert {
+    margin-bottom: 24px;
+
+    padding: 16px 20px;
+
+    border-radius: 18px;
+
+    font-weight: 600;
+}
+
+.dashboard-alert-error {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.dashboard-alert-success {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.dashboard-button {
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 14px 20px;
+
+    background: linear-gradient(135deg, #7c4dff, #5865f2);
+
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.dashboard-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 24px rgba(124, 77, 255, 0.35);
+}
+
+.dashboard-columns {
+    display: grid;
+
+    grid-template-columns: 1.1fr 0.9fr;
+
+    gap: 28px;
+
+    align-items: start;
 }
 
 .dashboard-header {
@@ -26,7 +81,7 @@
 .dashboard-layout {
     display: grid;
 
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 120px 1fr;
 
     gap: 28px;
 }
@@ -51,44 +106,132 @@
 .dashboard-main,
 .panel,
 .empty-state {
-    padding: 32px;
+    padding: 24px;
+}
+.dashboard-sidebar h3 {
+    margin-bottom: 16px;
+    align-items: center;
 }
 
-.guild-list {
+.dashboard-sidebar {
+    align-self: start;
+}
+
+.dashboard-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
+    gap: 12px;
+
+    margin-bottom: 24px;
 }
 
-.guild-button {
-    width: 100%;
-
-    padding: 18px;
-
+.dashboard-tab {
     border: none;
-    border-radius: 18px;
 
-    background: #f8f7f2;
+    padding: 12px 20px;
 
-    text-align: left;
+    border-radius: 14px;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    font-weight: 600;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.guild-button:hover {
+.dashboard-tab:hover {
     transform: translateY(-2px);
 
-    background: #ffffff;
+    background: #e5e7eb;
 }
 
-.guild-button-active {
+.dashboard-tab-active {
     background: linear-gradient(135deg, #7c4dff, #5865f2);
 
     color: white;
 
-    box-shadow: 0 8px 24px rgba(124, 77, 255, 0.35);
+    box-shadow: 0 8px 20px rgba(124, 77, 255, 0.3);
+}
+
+/*guildsbuttons*/
+
+.guild-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.guild-button {
+    width: 52px;
+    height: 52px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.guild-button:hover {
+    transform: scale(1.08);
+
+    border-radius: 18px;
+}
+
+.guild-button-active {
+    box-shadow: 0 0 0 3px #5865f2;
+}
+
+.guild-icon {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: inherit;
+}
+
+.guild-tooltip {
+    position: absolute;
+
+    left: 80px;
+
+    background: #111827;
+
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity 0.2s ease;
+}
+
+.guild-button-wrapper {
+    position: relative;
+}
+
+.guild-button-wrapper:hover .guild-tooltip {
+    opacity: 1;
 }
 
 .guild-button small {
@@ -97,7 +240,7 @@
 
     opacity: 0.8;
 }
-
+/*settings*/
 .settings-grid {
     display: grid;
 
@@ -137,40 +280,7 @@
     padding: 14px;
 }
 
-.dashboard-button {
-    border: none;
-
-    border-radius: 14px;
-
-    padding: 14px 20px;
-
-    background: linear-gradient(135deg, #7c4dff, #5865f2);
-
-    color: white;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
-}
-
-.dashboard-button:hover {
-    transform: translateY(-2px);
-
-    box-shadow: 0 10px 24px rgba(124, 77, 255, 0.35);
-}
-
-.dashboard-columns {
-    display: grid;
-
-    grid-template-columns: 1.1fr 0.9fr;
-
-    gap: 28px;
-
-    align-items: start;
-}
-
+/*panels*/
 .panel-heading {
     display: flex;
     justify-content: space-between;
@@ -178,7 +288,7 @@
 
     margin-bottom: 20px;
 }
-
+/*buttons*/
 .secondary-button {
     border: none;
 
@@ -191,6 +301,8 @@
     cursor: pointer;
 }
 
+/*lists*/
+
 .member-list,
 .warning-list,
 .command-list {
@@ -198,6 +310,73 @@
     padding: 0;
     margin: 0;
 }
+
+/*warnings*/
+.warning-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.warning-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 12px;
+
+    border-radius: 16px;
+
+    background: #f8fafc;
+}
+
+.warning-list img {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+}
+
+.warning-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.warning-user {
+    font-weight: 600;
+}
+
+.warning-count {
+    margin: 2px 0 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.warning-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.warning-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.warning-list li {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 14px;
+
+    border-radius: 18px;
+
+    background: #f8fafc;
+}
+
+/*members*/
 
 .member-list {
     display: flex;
@@ -220,26 +399,6 @@
 
 .member-list img {
     border-radius: 50%;
-}
-
-.dashboard-alert {
-    margin-bottom: 24px;
-
-    padding: 16px 20px;
-
-    border-radius: 18px;
-
-    font-weight: 600;
-}
-
-.dashboard-alert-error {
-    background: #fef2f2;
-    color: #b91c1c;
-}
-
-.dashboard-alert-success {
-    background: #ecfdf3;
-    color: #15803d;
 }
 
 @media (max-width: 1000px) {

@@ -1,10 +1,14 @@
-import '../styles/variables.css';
-import '../styles/utility.css';
-import '../styles/guildsbuttons.css';
-import TwitchPanel from './twitch/TwitchPanels.js';
+import '../../styles/variables.css';
+import '../../styles/utility.css';
+import '../../styles/guildsbuttons.css';
+import TwitchPanel from '../twitch/TwitchPanels.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import WelcomePanel from './welcome/WelcomePanel.js';
-
+import WelcomePanel from '../welcome/WelcomePanel.js';
+import SecurityPanel from '../dashboard/SecurityPanel';
+import SettingsPanel from '../dashboard/SettingsPanel.js';
+import DashboardTabs from '../dashboard/DashboardTabs.js';
+import CommandsPanel from '../dashboard/CommandsPanel.js';
+import MembersPanel from '../dashboard/MembersPanel.js';
 const settingFields = [
     {
         key: 'autoroleID',
@@ -112,6 +116,7 @@ function GuildsButton() {
         mention: true,
     });
 
+    const [activeTab, setActiveTab] = useState('settings');
     const [loading, setLoading] = useState(false);
     const [savingKey, setSavingKey] = useState('');
     const [status, setStatus] = useState('');
@@ -437,8 +442,7 @@ function GuildsButton() {
                 <button
                     className="dashboard-button"
                     onClick={fetchGuilds}
-                    disabled={loading}
-                >
+                    disabled={loading}>
                     {loading ? 'Loading...' : 'Refresh'}
                 </button>
             </div>
@@ -459,18 +463,34 @@ function GuildsButton() {
 
                     <div className="guild-list">
                         {guilds.map((guild) => (
-                            <button
-                                className={`guild-button ${
-                                    guild.id === selectedGuildID
-                                        ? 'guild-button-active'
-                                        : ''
-                                }`}
-                                key={guild.id}
-                                onClick={() => selectGuild(guild.id)}
-                            >
-                                <span>{guild.name}</span>
-                                <small>{guild.memberCount} medlemmer</small>
-                            </button>
+                            <div
+                                className="guild-button-wrapper"
+                                key={guild.id}>
+                                <button
+                                    className={`guild-button ${
+                                        guild.id === selectedGuildID
+                                            ? 'guild-button-active'
+                                            : ''
+                                    }`}
+                                    onClick={() => selectGuild(guild.id)}
+                                    title={guild.name}>
+                                    {guild.icon ? (
+                                        <img
+                                            src={guild.icon}
+                                            alt={guild.name}
+                                            className="guild-icon"
+                                        />
+                                    ) : (
+                                        <div className="guild-icon-fallback">
+                                            {guild.name.charAt(0)}
+                                        </div>
+                                    )}
+                                </button>
+
+                                <div className="guild-tooltip">
+                                    {guild.name}
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </aside>
@@ -503,225 +523,88 @@ function GuildsButton() {
                                 </div>
                             </div>
 
-                            <div className="settings-grid">
-                                {settingFields.map((field) => {
-                                    const options =
-                                        field.source === 'roles'
-                                            ? roles
-                                            : channels;
+                            <DashboardTabs
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                            />
 
-                                    return (
-                                        <div
-                                            className="setting-card"
-                                            key={field.key}
-                                        >
-                                            <label htmlFor={field.key}>
-                                                {field.label}
-                                            </label>
+                            {activeTab === 'settings' && (
+                                <SettingsPanel
+                                    settingFields={settingFields}
+                                    settings={settings}
+                                    roles={roles}
+                                    channels={channels}
+                                    updateSetting={updateSetting}
+                                    saveSetting={saveSetting}
+                                    savingKey={savingKey}
+                                />
+                            )}
 
-                                            <div className="setting-row">
-                                                <select
-                                                    id={field.key}
-                                                    value={settings[field.key]}
-                                                    onChange={(event) =>
-                                                        updateSetting(
-                                                            field.key,
-                                                            event.target.value
-                                                        )
-                                                    }
-                                                >
-                                                    <option value="">
-                                                        {field.emptyText}
-                                                    </option>
+                            {activeTab === 'security' && (
+                                <SecurityPanel
+                                    warnings={warnings}
+                                    selectedGuildID={selectedGuildID}
+                                    selectGuild={selectGuild}
+                                />
+                            )}
 
-                                                    {options.map((option) => (
-                                                        <option
-                                                            key={option.id}
-                                                            value={option.id}
-                                                        >
-                                                            {field.source ===
-                                                            'channels'
-                                                                ? `#${option.name}`
-                                                                : option.name}
+                            {activeTab === 'commands' && (
+                                <CommandsPanel commands={commands} />
+                            )}
 
-                                                            {option.editable ===
-                                                            false
-                                                                ? ' (kan ikke tildeles)'
-                                                                : ''}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                            {activeTab === 'Members' && (
+                                <MembersPanel
+                                    members={members}
+                                    page={page}
+                                    totalPages={totalPages}
+                                    setPage={setPage}
+                                />
+                            )}
 
-                                                <button
-                                                    className="dashboard-button"
-                                                    onClick={() =>
-                                                        saveSetting(field)
-                                                    }
-                                                    disabled={
-                                                        !settings[field.key] ||
-                                                        savingKey === field.key
-                                                    }
-                                                >
-                                                    {savingKey === field.key
-                                                        ? 'Lagrer...'
-                                                        : 'Lagre'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            <div className="warnings-row">
-                                <div className="panel warnings-panel">
-                                    <div className="panel-heading">
-                                        <h3>Warnings</h3>
-
-                                        <button
-                                            className="secondary-button"
-                                            onClick={() =>
-                                                selectGuild(
-                                                    selectedGuildID,
-                                                    false
-                                                )
+                            {activeTab === 'twitch' && (
+                                <div className="twitch-panel">
+                                    <div className="panel">
+                                        <TwitchPanel
+                                            twitchSettings={twitchSettings}
+                                            setTwitchSettings={
+                                                setTwitchSettings
                                             }
-                                        >
-                                            Refresh
-                                        </button>
-                                    </div>
-
-                                    {warnings.length === 0 && (
-                                        <p className="muted-text">
-                                            Ingen warnings på denne serveren.
-                                        </p>
-                                    )}
-
-                                    <ul className="warning-list">
-                                        {warnings.map((warningUser) => (
-                                            <li key={warningUser.userId}>
-                                                <div className="warning-user">
-                                                    <img
-                                                        src={warningUser.avatar}
-                                                        alt={
-                                                            warningUser.username
-                                                        }
-                                                        width={40}
-                                                        height={40}
-                                                    />
-
-                                                    <div>
-                                                        <strong>
-                                                            {warningUser.tag ||
-                                                                warningUser.username}
-                                                        </strong>
-
-                                                        <span>
-                                                            {warningUser.count}{' '}
-                                                            warning(s)
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div className="dashboard-columns">
-                                <div className="panel commands-panel">
-                                    <h3>Commands</h3>
-
-                                    <ul className="command-list">
-                                        {commands.map((command) => (
-                                            <li key={command.name}>
-                                                <strong>/{command.name}</strong>
-
-                                                <span>
-                                                    {command.description}
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className="panel">
-                                    <h3>Members</h3>
-
-                                    <ul className="member-list">
-                                        {members.map((member) => (
-                                            <li key={member.id}>
-                                                <img
-                                                    src={member.avatar}
-                                                    alt={member.username}
-                                                    width={40}
-                                                    height={40}
-                                                />
-
-                                                <span>
-                                                    {member.tag ||
-                                                        member.username}
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>
-
-                                    <div className="pagination">
-                                        <button
-                                            onClick={() =>
-                                                setPage((p) =>
-                                                    Math.max(p - 1, 1)
-                                                )
+                                            channels={channels}
+                                            saveTwitchSettings={
+                                                saveTwitchSettings
                                             }
-                                            disabled={page === 1}
-                                        >
-                                            Previous
-                                        </button>
-
-                                        <span>
-                                            {page} / {totalPages}
-                                        </span>
-
-                                        <button
-                                            onClick={() =>
-                                                setPage((p) =>
-                                                    Math.min(p + 1, totalPages)
-                                                )
+                                            testTwitchAlert={testTwitchAlert}
+                                            roles={roles}
+                                            loadStreamer={loadStreamer}
+                                            removeStreamer={removeStreamer}
+                                            editingStreamer={editingStreamer}
+                                            setEditingStreamer={
+                                                setEditingStreamer
                                             }
-                                            disabled={page === totalPages}
-                                        >
-                                            Next
-                                        </button>
+                                        />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="twitch-panel">
-                                <div className="panel">
-                                    <TwitchPanel
-                                        twitchSettings={twitchSettings}
-                                        setTwitchSettings={setTwitchSettings}
-                                        channels={channels}
-                                        saveTwitchSettings={saveTwitchSettings}
-                                        testTwitchAlert={testTwitchAlert}
-                                        roles={roles}
-                                        loadStreamer={loadStreamer}
-                                        removeStreamer={removeStreamer}
-                                        editingStreamer={editingStreamer}
-                                        setEditingStreamer={setEditingStreamer}
-                                    />
+                            )}
+
+                            {activeTab === 'welcome' && (
+                                <div className="welcome-panel-wrapper">
+                                    <div className="panel">
+                                        <WelcomePanel
+                                            welcomeSettings={welcomeSettings}
+                                            setWelcomeSettings={
+                                                setWelcomeSettings
+                                            }
+                                            channels={channels}
+                                            saveWelcomeSettings={
+                                                saveWelcomeSettings
+                                            }
+                                            testWelcomeMessage={
+                                                testWelcomeMessage
+                                            }
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="welcome-panel-wrapper">
-                                <div className="panel">
-                                    <WelcomePanel
-                                        welcomeSettings={welcomeSettings}
-                                        setWelcomeSettings={setWelcomeSettings}
-                                        channels={channels}
-                                        saveWelcomeSettings={
-                                            saveWelcomeSettings
-                                        }
-                                        testWelcomeMessage={testWelcomeMessage}
-                                    />
-                                </div>
-                            </div>
+                            )}
                         </>
                     )}
                 </div>

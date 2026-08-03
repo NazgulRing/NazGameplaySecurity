@@ -31,17 +31,6 @@ function keepAlive(client, app) {
     client.on('guildMemberAdd', guildMemberAdd);
     /*Run the Case animasjon site */
     app.use(express.static(path.join(__dirname, 'client', 'build')));
-    app.get('/api/guilds', (req, res) => {
-        if (!client)
-            return res.status(500).json({ error: 'Client ikke tilgjengelig' });
-
-        const guilds = client.guilds.cache.map((guild) => ({
-            id: guild.id,
-            name: guild.name,
-            memberCount: guild.memberCount,
-        }));
-        res.json(guilds);
-    });
 
     /* 2️⃣  – API‑endepunkter (legg flere før catch‑all) */
 

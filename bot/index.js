@@ -68,6 +68,7 @@ app.get('/api/guilds', (req, res) => {
         id: g.id,
         name: g.name,
         memberCount: g.memberCount,
+        icon: g.iconURL({ size: 256, format: 'png' }) || null,
     }));
     res.json(guilds);
 });

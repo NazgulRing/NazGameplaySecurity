@@ -6,7 +6,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 	// Command name users will type
 		.setName('membercount') 
-	// Command description shown in Discord UI
+	// Command description shown in Discord UI 
 		.setDescription('Display your member number.'),
 	// This function runs when the command is executed
 	async execute(interaction) {
