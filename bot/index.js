@@ -13,6 +13,7 @@ const {
     ChannelType,
 } = require('discord.js');
 const startTwitchService = require('./twitch/service.js');
+const startAsaService = require('./asa/service.js');
 
 const db = new QuickDB();
 const client = new Client({
@@ -28,7 +29,7 @@ const client = new Client({
 process.on('uncaughtException', (error) => {
     if (error.code === 'EADDRINUSE') {
         console.error(
-            'Port 3001 er allerede i bruk. Stopp gammel npm start/node-prosess for DiscordBot for du starter pa nytt.'
+            'Port 3001 is already in use. Stop the existing npm start/node process for DiscordBot before starting a new one.'
         );
         return;
     }
@@ -62,7 +63,7 @@ app.use('/api', settingsRouter);
 // Endpoint: Hent alle guilds botten er i
 app.get('/api/guilds', (req, res) => {
     if (!client || !client.isReady()) {
-        return res.status(500).json({ error: 'Discord-klienten er ikke klar' });
+        return res.status(500).json({ error: 'Discord client is not ready' });
     }
     const guilds = client.guilds.cache.map((g) => ({
         id: g.id,
@@ -94,7 +95,7 @@ for (const folder of commandFolders) {
             client.commands.set(command.data.name, command);
         } else {
             console.warn(
-                `[ADVARSEL] Kommando på ${filePath} mangler "data" eller "execute".`
+                `[WARNING] Command at ${filePath} is missing "data" or "execute".`
             );
         }
     }
@@ -124,14 +125,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const logChannelID = await db.get(`setLogChat_${guild.id}`);
 
     if (!logChannelID) {
-        console.warn(`⚠️ Loggkanal ikke satt for guild ${guild.id}`);
+        console.warn(`⚠️ Log channel not set for guild ${guild.id}`);
         return;
     }
 
     const logChannel = guild.channels.cache.get(logChannelID);
     if (!logChannel || logChannel.type !== ChannelType.GuildText) {
         console.warn(
-            `⚠️ Loggkanal ikke funnet eller ikke en tekstkanal i ${guild.id}`
+            `⚠️ Log channel not found or not a text channel in ${guild.id}`
         );
         return;
     }
@@ -143,7 +144,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         .addFields(
             { name: 'Server', value: guild.name, inline: true },
             { name: 'Command', value: `/${commandName}`, inline: true },
-            { name: 'Bruker', value: `${user.tag} (${user.id})`, inline: false }
+            { name: 'User', value: `${user.tag} (${user.id})`, inline: false }
         )
         .setTimestamp()
         .setFooter({ text: 'Chat Command Executed' });
@@ -193,11 +194,11 @@ client.on(Events.GuildMemberAdd, async (member) => {
 
             .addFields(
                 {
-                    name: 'Velkommen!',
-                    value: `${member} har blitt med i serveren.`,
+                    name: 'Welcome!',
+                    value: `${member} has joined the server.`,
                 },
                 {
-                    name: 'Totalt medlemmer',
+                    name: 'Total Members',
                     value: `${guild.memberCount}`,
                 }
             )
@@ -239,7 +240,7 @@ client.on(Events.GuildMemberAdd, async (member) => {
             console.log(`[autorole] Added ${role.name} to ${member.user.tag}`);
         } catch (err) {
             console.error(
-                `[autorole] Kunne ikke tildele ${role.name} til ${member.user.tag}: ${err.message}`
+                `[autorole] Could not assign ${role.name} to ${member.user.tag}: ${err.message}`
             );
         }
     }
@@ -249,24 +250,25 @@ client.on(Events.GuildMemberAdd, async (member) => {
 const keepAlive = require('../server/server');
 
 client.once('ready', async () => {
-    console.log('🤖 Bot er online!');
+    console.log('🤖 Bot is online!');
     startTwitchService(client);
+    startAsaService(client);
 
     try {
         await updateCommands(client);
-        console.log('✅ Kommandoer oppdatert!');
+        console.log('✅ Commands updated!');
     } catch (error) {
-        console.error('❌ Feil ved oppdatering av kommandoer:', error);
+        console.error('❌ Error updating commands:', error);
     }
 
-    // Jevnlig syncing av kommandoer
+    // Regular syncing of commands
     setInterval(
         async () => {
             try {
-                console.log('🔄 Synkroniserer kommandoer...');
+                console.log('🔄 Syncing commands...');
                 await updateCommands(client);
             } catch (error) {
-                console.error('❌ Feil ved synkronisering:', error);
+                console.error('❌ Error syncing commands:', error);
             }
         },
         30 * 60 * 1000
@@ -275,7 +277,7 @@ client.once('ready', async () => {
     keepAlive(client, app);
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () =>
-        console.log(`✅ Express-server kjører på port ${PORT}`)
+        console.log(`✅ Express-server is running on port ${PORT}`)
     );
 });
 

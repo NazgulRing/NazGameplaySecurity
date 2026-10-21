@@ -60,7 +60,9 @@
 
         "nodemon": "^3.1.0",
 
-        "quick.db": "^9.1.7"
+        "quick.db": "^9.1.7",
+
+        "rcon-client": "^4.2.5"
 
     },
 

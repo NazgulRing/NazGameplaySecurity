@@ -7,8 +7,11 @@ const { name } = require('../bot/events/ready');
 const db = new QuickDB();
 const createSettingsRouter = require('./routes/settings');
 const guildMemberAdd = require('../bot/events/guildMemberAdd.js');
+const { updateStatusMessage } = require('../bot/asa/statusMessage');
 
 function keepAlive(client, app) {
+    app.use(express.json());
+
     /*Allows for front to get data from port 3001*/
     app.use(
         cors({
@@ -24,7 +27,41 @@ function keepAlive(client, app) {
             },
         })
     );
-    app.use(express.json());
+
+    app.post('/asa/event', async (req, res) => {
+        try {
+            const { event, secret } = req.body;
+
+            if (
+                !process.env.ASA_EVENT_SECRET ||
+                secret !== process.env.ASA_EVENT_SECRET
+            ) {
+                return res.status(401).json({ error: 'Unauthorized' });
+            }
+
+            const allowedEvents = ['starting', 'stopping'];
+
+            if (!allowedEvents.includes(event)) {
+                return res.status(400).json({ error: 'Invalid event' });
+            }
+
+            await updateStatusMessage(client, {
+                status: event === 'starting' ? 'starting' : 'stopping',
+                playerCount: 0,
+            });
+
+            console.log(`[ASA] Received event: ${event}`);
+
+            return res.json({ success: true });
+        } catch (error) {
+            console.error('[ASA] Event error:', error);
+
+            return res.status(500).json({
+                error: 'Internal server error',
+            });
+        }
+    });
+
     /* 1️⃣  – Statiske React‑filer  */
 
     app.use('/api', createSettingsRouter(client));
@@ -79,9 +116,7 @@ function keepAlive(client, app) {
 
     app.get('/api/commands', (req, res) => {
         if (!client || !client.commands) {
-            return res
-                .status(500)
-                .json({ error: 'Kommandoer ikke tilgjengelig' });
+            return res.status(500).json({ error: 'Commands not available' });
         }
         const commands = client.commands.map((cmd) => ({
             name: cmd.data.name,

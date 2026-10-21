@@ -15,42 +15,42 @@ const settingFields = [
         label: 'Auto role',
         endpoint: '/api/autorole',
         source: 'roles',
-        emptyText: 'Ingen rolle',
+        emptyText: 'No role',
     },
     {
         key: 'botroleID',
         label: 'Bot role',
         endpoint: '/api/botrole',
         source: 'roles',
-        emptyText: 'Ingen bot-rolle',
+        emptyText: 'No bot role selected',
     },
     {
         key: 'welcomeChannelID',
         label: 'Welcome channel',
         endpoint: '/api/welcomechannel',
         source: 'channels',
-        emptyText: 'Ingen kanal',
+        emptyText: 'No Welcome Channel selected',
     },
     {
         key: 'logChannelID',
         label: 'Log channel',
         endpoint: '/api/logchannel',
         source: 'channels',
-        emptyText: 'Ingen log-kanal',
+        emptyText: 'No Log Channel selected',
     },
     {
         key: 'eventChannelID',
         label: 'Event channel',
         endpoint: '/api/eventchannel',
         source: 'channels',
-        emptyText: 'Ingen kanal',
+        emptyText: 'No Event Channel selected',
     },
     {
         key: 'messageLogChannelID',
         label: 'Message log channel',
         endpoint: '/api/messagelogchannel',
         source: 'channels',
-        emptyText: 'Ingen kanal',
+        emptyText: 'No Message Log Channel selected',
     },
 ];
 
@@ -64,7 +64,10 @@ async function requestJSON(url, options) {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-        throw new Error(data?.error || 'Noe gikk galt');
+        throw new Error(
+            data?.error ||
+                'Something went wrong while fetching data from the server.'
+        );
     }
 
     return data;
@@ -155,72 +158,73 @@ function GuildsButton() {
         fetchCommands();
     }, [fetchCommands, fetchGuilds]);
 
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+    const selectGuild = useCallback(
+        async (guildID, resetPage = true) => {
+            setSelectedGuildID(guildID);
+
+            if (resetPage) {
+                setPage(1);
+            }
+
+            setMembers([]);
+            setRoles([]);
+            setChannels([]);
+            setWarnings([]);
+            setStatus('');
+            setError('');
+            setLoading(true);
+
+            try {
+                const currentPage = resetPage ? 1 : page;
+
+                const [
+                    membersData,
+                    rolesData,
+                    channelsData,
+                    settingsData,
+                    warningsData,
+                    twitchData,
+                    welcomeData,
+                ] = await Promise.all([
+                    requestJSON(`/api/members/${guildID}?page=${currentPage}`),
+                    requestJSON(`/api/roles/${guildID}`),
+                    requestJSON(`/api/channels/${guildID}`),
+                    requestJSON(`/api/settings/${guildID}`),
+                    requestJSON(`/api/warnings/${guildID}`),
+                    requestJSON(`/api/twitch/${guildID}`),
+                    requestJSON(`/api/welcome/${guildID}`),
+                ]);
+
+                setMembers(membersData.members);
+                setTotalPages(membersData.totalPages);
+                setRoles(rolesData);
+                setChannels(channelsData);
+                setWarnings(warningsData);
+                setTwitchSettings(twitchData);
+                setWelcomeSettings(welcomeData);
+
+                setSettings({
+                    autoroleID: settingsData.autoroleID || '',
+                    botroleID: settingsData.botroleID || '',
+                    welcomeChannelID: settingsData.welcomeChannelID || '',
+                    logChannelID: settingsData.logChannelID || '',
+                    eventChannelID: settingsData.eventChannelID || '',
+                    messageLogChannelID: settingsData.messageLogChannelID || '',
+                });
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [page]
+    );
+
     useEffect(() => {
         if (selectedGuildID) {
             selectGuild(selectedGuildID, false);
         }
-    }, [page]);
-
-    async function selectGuild(guildID, resetPage = true) {
-        setSelectedGuildID(guildID);
-
-        if (resetPage) {
-            setPage(1);
-        }
-
-        setMembers([]);
-        setRoles([]);
-        setChannels([]);
-        setWarnings([]);
-        setStatus('');
-        setError('');
-        setLoading(true);
-
-        try {
-            const currentPage = resetPage ? 1 : page;
-
-            const [
-                membersData,
-                rolesData,
-                channelsData,
-                settingsData,
-                warningsData,
-                twitchData,
-                welcomeData,
-            ] = await Promise.all([
-                requestJSON(`/api/members/${guildID}?page=${currentPage}`),
-                requestJSON(`/api/roles/${guildID}`),
-                requestJSON(`/api/channels/${guildID}`),
-                requestJSON(`/api/settings/${guildID}`),
-                requestJSON(`/api/warnings/${guildID}`),
-                requestJSON(`/api/twitch/${guildID}`),
-                requestJSON(`/api/welcome/${guildID}`),
-            ]);
-
-            setMembers(membersData.members);
-            setTotalPages(membersData.totalPages);
-
-            setRoles(rolesData);
-            setChannels(channelsData);
-            setWarnings(warningsData);
-            setTwitchSettings(twitchData);
-            setWelcomeSettings(welcomeData);
-
-            setSettings({
-                autoroleID: settingsData.autoroleID || '',
-                botroleID: settingsData.botroleID || '',
-                welcomeChannelID: settingsData.welcomeChannelID || '',
-                logChannelID: settingsData.logChannelID || '',
-                eventChannelID: settingsData.eventChannelID || '',
-                messageLogChannelID: settingsData.messageLogChannelID || '',
-            });
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }
+    }, [page, selectedGuildID, selectGuild]);
 
     async function saveSetting(field) {
         if (!selectedGuildID || !settings[field.key]) return;
@@ -246,7 +250,7 @@ function GuildsButton() {
                 }),
             });
 
-            setStatus(`${field.label} er lagret`);
+            setStatus(`${field.label} is saved`);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -257,7 +261,7 @@ function GuildsButton() {
     async function saveTwitchSettings() {
         if (!selectedGuildID) return;
 
-        setStatus('Twitch settings lagret');
+        setStatus('Twitch settings saved');
         setEditingStreamer(null);
         setError('');
 
@@ -322,7 +326,7 @@ function GuildsButton() {
                 }),
             });
 
-            setStatus('Twitch settings lagret');
+            setStatus('Twitch settings saved');
         } catch (err) {
             console.error(err);
 
@@ -361,7 +365,7 @@ function GuildsButton() {
                 }),
             });
 
-            setStatus('Test notification sendt');
+            setStatus('Test notification sent');
         } catch (err) {
             setError(err.message);
         }
@@ -384,7 +388,7 @@ function GuildsButton() {
                 }),
             });
 
-            setStatus('Welcome settings lagret');
+            setStatus('Welcome settings has been saved');
         } catch (err) {
             setError(err.message);
         }
@@ -408,7 +412,7 @@ function GuildsButton() {
                 }),
             });
 
-            setStatus('Test welcome sendt');
+            setStatus('Test welcome sent');
         } catch (err) {
             setError(err.message);
         }
@@ -498,10 +502,10 @@ function GuildsButton() {
                 <div className="dashboard-main">
                     {!selectedGuild && (
                         <div className="empty-state">
-                            <h3>Velg en server</h3>
+                            <h3>Choose a server</h3>
                             <p>
-                                Da kan du sette roller, kanaler og se medlemmer
-                                fra samme sted.
+                                Here you can manage roles, channels and view
+                                members from the same place.
                             </p>
                         </div>
                     )}
@@ -512,13 +516,13 @@ function GuildsButton() {
                                 <div className="server-heading">
                                     <div>
                                         <p className="dashboard-kicker">
-                                            Valgt server
+                                            Selected Server
                                         </p>
                                         <h3>{selectedGuild.name}</h3>
                                     </div>
 
                                     <span>
-                                        {selectedGuild.memberCount} medlemmer
+                                        {selectedGuild.memberCount} members
                                     </span>
                                 </div>
                             </div>

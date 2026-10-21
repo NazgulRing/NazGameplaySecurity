@@ -41,8 +41,7 @@ function WelcomePanel({
                             ...current,
                             channelID: e.target.value,
                         }))
-                    }
-                >
+                    }>
                     <option value="">Select channel</option>
 
                     {channels.map((channel) => (
@@ -65,9 +64,7 @@ function WelcomePanel({
                             message: e.target.value,
                         }))
                     }
-                    placeholder="
-{user} joined the server!
-"
+                    placeholder="{user} has joined the server!"
                 />
             </div>
 
@@ -137,8 +134,7 @@ function WelcomePanel({
                                     ...current,
                                     background: bg,
                                 }))
-                            }
-                        >
+                            }>
                             <img src={bg} alt="background" />
                         </div>
                     ))}
@@ -177,8 +173,7 @@ function WelcomePanel({
                     className="preview-card"
                     style={{
                         backgroundImage: `url(${welcomeSettings.background})`,
-                    }}
-                >
+                    }}>
                     <div className="preview-overlay">
                         <img
                             src="https://cdn.discordapp.com/embed/avatars/0.png"
@@ -207,20 +202,14 @@ function WelcomePanel({
 
             <div className="welcome-actions">
                 <button
-                    className="
-welcome-button secondary
-"
-                    onClick={testWelcomeMessage}
-                >
+                    className="welcome-button secondary"
+                    onClick={testWelcomeMessage}>
                     Test Welcome
                 </button>
 
                 <button
-                    className="
-welcome-button primary
-"
-                    onClick={saveWelcomeSettings}
-                >
+                    className="welcome-button primary"
+                    onClick={saveWelcomeSettings}>
                     Save Welcome
                 </button>
             </div>

@@ -15,9 +15,7 @@ function SecurityPanel({ warnings, selectedGuildID, selectGuild }) {
                 </div>
 
                 {warnings.length === 0 && (
-                    <p className="muted-text">
-                        Ingen warnings på denne serveren.
-                    </p>
+                    <p className="muted-text">No Warnings on this server.</p>
                 )}
 
                 <ul className="warning-list">

@@ -33,7 +33,7 @@ function SettingsPanel({
                                             : option.name}
 
                                         {option.editable === false
-                                            ? ' (kan ikke tildeles)'
+                                            ? ' (Cannot assign)'
                                             : ''}
                                     </option>
                                 ))}
@@ -46,9 +46,7 @@ function SettingsPanel({
                                     !settings[field.key] ||
                                     savingKey === field.key
                                 }>
-                                {savingKey === field.key
-                                    ? 'Lagrer...'
-                                    : 'Lagre'}
+                                {savingKey === field.key ? 'Saving...' : 'Save'}
                             </button>
                         </div>
                     </div>
