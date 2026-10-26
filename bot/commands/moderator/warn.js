@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const { randomUUID } = require('node:crypto');
 const { QuickDB } = require('quick.db');
 const db = new QuickDB();
 
@@ -22,15 +23,26 @@ module.exports = {
         ),
     async execute(interaction) {
         if (
+            !interaction.inGuild() ||
             !interaction.member.permissions.has(
                 PermissionsBitField.Flags.KickMembers
             )
         )
             return await interaction.reply({
-                content: 'You do not have permission to use this command',
+                content:
+                    'This command can only be used in a server by members with Kick Members permission.',
                 ephemeral: true,
             });
+
         const member = interaction.options.getUser('target');
+
+        if (member.id === interaction.client.user.id) {
+            return await interaction.reply({
+                content: 'You cannot warn the bot itself.',
+                ephemeral: true,
+            });
+        }
+
         let reason = interaction.options.getString('reason');
 
         if (!reason) reason = 'No reason provided';
@@ -54,6 +66,7 @@ module.exports = {
         const warningKey = `warnDetails_${interaction.guild.id}_${member.id}`;
         const warnings = (await db.get(warningKey)) || [];
         warnings.push({
+            id: randomUUID(),
             reason,
             moderatorId: interaction.user.id,
             moderatorTag: interaction.user.tag,

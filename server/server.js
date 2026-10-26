@@ -9,6 +9,14 @@ const createSettingsRouter = require('./routes/settings');
 const guildMemberAdd = require('../bot/events/guildMemberAdd.js');
 const { updateStatusMessage } = require('../bot/asa/statusMessage');
 
+const {
+    memberJoined,
+    memberLeft,
+    memberBanned,
+    memberUnbanned,
+    timeoutGiven,
+} = require('../bot/events/memberLogs.js');
+
 function keepAlive(client, app) {
     app.use(express.json());
 
@@ -65,7 +73,14 @@ function keepAlive(client, app) {
     /* 1️⃣  – Statiske React‑filer  */
 
     app.use('/api', createSettingsRouter(client));
+
     client.on('guildMemberAdd', guildMemberAdd);
+    client.on('guildMemberAdd', memberJoined);
+    client.on('guildMemberRemove', memberLeft);
+    client.on('guildMemberUpdate', timeoutGiven);
+
+    client.on('guildBanAdd', memberBanned);
+    client.on('guildBanRemove', memberUnbanned);
     /*Run the Case animasjon site */
     app.use(express.static(path.join(__dirname, 'client', 'build')));
 

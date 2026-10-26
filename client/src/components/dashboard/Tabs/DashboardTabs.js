@@ -5,62 +5,52 @@ function DashboardTabs({ activeTab, setActiveTab }) {
         <div className="dashboard-tabs">
             <button
                 className={
-                    activeTab === 'settings'
+                    activeTab === 'General'
                         ? 'dashboard-tab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
-                onClick={() => setActiveTab('settings')}>
-                Settings
+                onClick={() => setActiveTab('General')}>
+                General
             </button>
 
             <button
                 className={
-                    activeTab === 'security'
+                    activeTab === 'Security'
                         ? 'dashboard-tab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
-                onClick={() => setActiveTab('security')}>
+                onClick={() => setActiveTab('Security')}>
                 Security
             </button>
 
             <button
                 className={
-                    activeTab === 'commands'
+                    activeTab === 'Moderation'
                         ? 'dashboard-tab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
-                onClick={() => setActiveTab('commands')}>
-                Commands
+                onClick={() => setActiveTab('Moderation')}>
+                Moderation
             </button>
 
             <button
                 className={
-                    activeTab === 'Members'
+                    activeTab === 'Notifications'
                         ? 'dashboard-tab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
-                onClick={() => setActiveTab('Members')}>
-                Members
+                onClick={() => setActiveTab('Notifications')}>
+                Notifications
             </button>
 
             <button
                 className={
-                    activeTab === 'twitch'
+                    activeTab === 'Module Settings'
                         ? 'dashboard-tab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
-                onClick={() => setActiveTab('twitch')}>
-                Twitch
-            </button>
-
-            <button
-                className={
-                    activeTab === 'welcome'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('welcome')}>
-                Welcome
+                onClick={() => setActiveTab('Module Settings')}>
+                Module Settings
             </button>
         </div>
     );

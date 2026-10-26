@@ -12,10 +12,30 @@ async function generateWelcomeCard({
     const ctx = canvas.getContext('2d');
 
     // background
-    const bgPath = path.join(__dirname, '../../../public', background);
 
-    const bg = await loadImage(bgPath);
-    console.log(bgPath);
+    // Background: support both base64 data URLs and local files
+    let bgSource = background;
+
+    if (
+        typeof background === 'string' &&
+        background.startsWith('data:image/')
+    ) {
+        const base64Data = background.split(',')[1];
+
+        if (!base64Data) {
+            throw new Error('Invalid base64 background image');
+        }
+
+        bgSource = Buffer.from(base64Data, 'base64');
+    } else if (typeof background === 'string' && background) {
+        bgSource = path.isAbsolute(background)
+            ? background
+            : path.join(__dirname, '../../../public', background);
+    } else {
+        throw new Error('No background image provided');
+    }
+
+    const bg = await loadImage(bgSource);
     ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
     // mørk overlay

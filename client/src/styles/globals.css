@@ -1,41 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-html{
-  scroll-behavior:smooth;
+html {
+    scroll-behavior: smooth;
 }
 
-body{
-  font-family:'Inter',sans-serif;
+body {
+    font-family: 'Inter', sans-serif;
 
-  background:
-    linear-gradient(
-      180deg,
-      #b49d35 0%,
-      #9f8b2d 100%
-    );
+    background-color: linear-gradient(180deg, #b49d35 0%, #9f8b2d 100%);
+    background-image:
+        linear-gradient(rgba(8, 12, 9, 0.55), rgba(8, 12, 9, 0.7)),
+        url(../assets/Background.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 
-  color:#101828;
+    color: #101828;
 
-  min-height:100vh;
+    min-height: 100vh;
 
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-img{
-  max-width:100%;
-  display:block;
+img {
+    max-width: 100%;
+    display: block;
 }
 
 button,
 input,
 textarea,
-select{
-  font-family:'Inter',sans-serif;
+select {
+    font-family: 'Inter', sans-serif;
 }

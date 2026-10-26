@@ -1,13 +1,13 @@
-import Hero from './components/Hero';
-import Footer from './components/Footer';
+import Footer from './components/layout/Footer';
 import GuildsButton from './components/dashboard/GuildsButtons';
-import InnerContent from './components/InnerContent';
+import Navmenu from './components/layout/Navmenu';
+import InnerContent from './components/dashboard/InnerContent';
 
 function App() {
     return (
         <div className="Main">
             <header>
-                <Hero className="w-full" />
+                <Navmenu />
             </header>
             <main>
                 <InnerContent className="ct-section">

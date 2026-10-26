@@ -16,6 +16,7 @@ const startTwitchService = require('./twitch/service.js');
 const startAsaService = require('./asa/service.js');
 
 const db = new QuickDB();
+
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -23,6 +24,7 @@ const client = new Client({
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
         IntentsBitField.Flags.GuildVoiceStates,
+        IntentsBitField.Flags.GuildModeration,
     ],
 });
 
@@ -40,25 +42,38 @@ process.on('uncaughtException', (error) => {
 
 // ---------- Express Setup ----------
 const app = express();
+
 app.use(
     cors({
         origin(origin, callback) {
-            if (
-                !origin ||
-                /^http:\/\/(localhost|127\.0\.0\.1):3000$/.test(origin)
-            ) {
+            const allowedOrigins = new Set([
+                'http://localhost:3000',
+                'http://127.0.0.1:3000',
+                'http://localhost:3001',
+                'http://127.0.0.1:3001',
+            ]);
+
+            // Local development only: allow requests without an Origin header.
+            if (!origin || allowedOrigins.has(origin.replace(/\/$/, ''))) {
                 return callback(null, true);
             }
 
+            console.error(`Blocked CORS origin: ${origin}`);
             return callback(new Error('Not allowed by CORS'));
         },
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
+
 app.use(express.json());
 
 // Settings Router
 const settingsRouter = require('../server/routes/settings')(client);
 app.use('/api', settingsRouter);
+// Timeouts Router
+const timeoutsRouter = require('../server/routes/timeouts')(client);
+app.use('/api', timeoutsRouter);
 
 // Endpoint: Hent alle guilds botten er i
 app.get('/api/guilds', (req, res) => {
@@ -120,6 +135,7 @@ for (const file of eventFiles) {
 // ---------- InteractionCreate: log commands usage ----------
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+    if (!interaction.inGuild() || !interaction.guild) return;
 
     const { user, guild, commandName } = interaction;
     const logChannelID = await db.get(`setLogChat_${guild.id}`);
@@ -249,11 +265,28 @@ client.on(Events.GuildMemberAdd, async (member) => {
 // ---------- Keep Alive og Oppstart ----------
 const keepAlive = require('../server/server');
 
+let servicesStarted = false;
+
 client.once('ready', async () => {
     console.log('🤖 Bot is online!');
-    startTwitchService(client);
-    startAsaService(client);
 
+    // Start Express umiddelbart når Discord er klar.
+    keepAlive(client, app);
+
+    const PORT = process.env.PORT || 3001;
+
+    app.listen(PORT, () => {
+        console.log(`✅ Express-server is running on port ${PORT}`);
+    });
+
+    // Start tjenester først etter at Discord er klar.
+    if (!servicesStarted) {
+        servicesStarted = true;
+        startTwitchService(client);
+        startAsaService(client);
+    }
+
+    // Oppdater kommandoer uten å forsinke Express-oppstarten.
     try {
         await updateCommands(client);
         console.log('✅ Commands updated!');
@@ -272,12 +305,6 @@ client.once('ready', async () => {
             }
         },
         30 * 60 * 1000
-    ); // hver 30. minutt
-
-    keepAlive(client, app);
-    const PORT = process.env.PORT || 3001;
-    app.listen(PORT, () =>
-        console.log(`✅ Express-server is running on port ${PORT}`)
     );
 });
 

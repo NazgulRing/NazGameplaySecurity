@@ -1,14 +1,23 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../../styles/variables.css';
 import '../../styles/utility.css';
 import '../../styles/guildsbuttons.css';
+
 import TwitchPanel from '../twitch/TwitchPanels.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import WelcomePanel from '../welcome/WelcomePanel.js';
-import SecurityPanel from '../dashboard/SecurityPanel';
-import SettingsPanel from '../dashboard/SettingsPanel.js';
-import DashboardTabs from '../dashboard/DashboardTabs.js';
-import CommandsPanel from '../dashboard/CommandsPanel.js';
-import MembersPanel from '../dashboard/MembersPanel.js';
+import WarningsPanel from './Panels/WarningsPanel.js';
+import SettingsPanel from './Panels/SettingsPanel.js';
+import CommandsPanel from './Panels/CommandsPanel.js';
+import MembersPanel from './Panels/MembersPanel.js';
+import LogsPanel from './Panels/LogsPanel.js';
+import BanListPanel from './Panels/BanListPanel.js';
+import TimeoutPanel from './Panels/TimeoutPanel.js';
+
+import DashboardTabs from './Tabs/DashboardTabs.js';
+import GeneralTabs from './Tabs/GeneralTabs.js';
+import SecurityTabs from './Tabs/SecurityTabs.js';
+import ModerationTabs from './Tabs/ModerationTabs.js';
+import NotificationTabs from './Tabs/NotificationTabs.js';
 const settingFields = [
     {
         key: 'autoroleID',
@@ -81,6 +90,18 @@ function GuildsButton() {
     const [totalPages, setTotalPages] = useState(1);
     const [editingStreamer, setEditingStreamer] = useState(null);
 
+    const [logSettings, setLogSettings] = useState({
+        memberJoined: { enabled: false, channelID: '' },
+        memberLeft: { enabled: false, channelID: '' },
+        memberKicked: { enabled: false, channelID: '' },
+        memberBanned: { enabled: false, channelID: '' },
+        memberUnbanned: { enabled: false, channelID: '' },
+        timeoutGiven: { enabled: false, channelID: '' },
+    });
+    const [timeoutMembers, setTimeoutMembers] = useState([]);
+    const [timeoutMembersLoading, setTimeoutMembersLoading] = useState(false);
+    const [timeoutHistory, setTimeoutHistory] = useState([]);
+    const [timeoutHistoryLoading, setTimeoutHistoryLoading] = useState(false);
     const [roles, setRoles] = useState([]);
     const [channels, setChannels] = useState([]);
 
@@ -94,6 +115,7 @@ function GuildsButton() {
     });
 
     const [warnings, setWarnings] = useState([]);
+    const [bans, setBans] = useState([]);
     const [commands, setCommands] = useState([]);
     const [twitchSettings, setTwitchSettings] = useState({
         enabled: false,
@@ -102,6 +124,31 @@ function GuildsButton() {
         message: '{streamer} is now live playing {game}',
         mentionRoleID: '',
     });
+    const loadTimeoutHistory = async (guildID) => {
+        if (!guildID) {
+            setTimeoutHistory([]);
+            return;
+        }
+
+        setTimeoutHistoryLoading(true);
+
+        try {
+            const data = await requestJSON(`/api/timeouts/history/${guildID}`);
+
+            setTimeoutHistory(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('[Timeout History] Failed to load:', error);
+            setTimeoutHistory([]);
+            setError(error.message);
+        } finally {
+            setTimeoutHistoryLoading(false);
+        }
+    };
+
+    const refreshBans = useCallback(async () => {
+        const data = await requestJSON(`/api/bans/${selectedGuildID}`);
+        setBans(data);
+    }, [selectedGuildID]);
 
     const [welcomeSettings, setWelcomeSettings] = useState({
         enabled: false,
@@ -119,11 +166,72 @@ function GuildsButton() {
         mention: true,
     });
 
-    const [activeTab, setActiveTab] = useState('settings');
+    const [activeCategory, setActiveCategory] = useState('General');
+    const [activeGeneralTab, setActiveGeneralTab] = useState('Overview');
+    const [activeSecurityTab, setActiveSecurityTab] = useState('Warnings');
+    const [activeModerationTab, setActiveModerationTab] = useState('Logs');
+    const [activeNotificationTab, setActiveNotificationTab] =
+        useState('Twitch');
+
     const [loading, setLoading] = useState(false);
     const [savingKey, setSavingKey] = useState('');
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (
+            activeCategory !== 'Security' ||
+            activeSecurityTab !== 'User Timeouts' ||
+            !selectedGuildID
+        ) {
+            return;
+        }
+
+        let cancelled = false;
+
+        async function loadTimeoutMembers() {
+            console.log('[Timeout UI] Starting member fetch');
+            setTimeoutMembersLoading(true);
+
+            try {
+                const data = await requestJSON(
+                    `/api/timeouts/members/${selectedGuildID}`
+                );
+
+                console.log('[Timeout UI] API response:', data);
+                console.log(
+                    '[Timeout UI] Members received:',
+                    Array.isArray(data)
+                        ? data.length
+                        : 'Response is not an array'
+                );
+
+                if (!cancelled) {
+                    setTimeoutMembers(data);
+                    setError('');
+                }
+            } catch (err) {
+                console.error('[Timeout UI] Fetch failed:', err);
+
+                if (!cancelled) {
+                    setError(err.message);
+                }
+            } finally {
+                console.log('[Timeout UI] Finished. Cancelled:', cancelled);
+
+                if (!cancelled) {
+                    setTimeoutMembersLoading(false);
+                }
+            }
+        }
+
+        loadTimeoutMembers();
+        loadTimeoutHistory(selectedGuildID);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [activeCategory, activeSecurityTab, selectedGuildID]);
 
     const selectedGuild = useMemo(
         () => guilds.find((guild) => guild.id === selectedGuildID),
@@ -158,73 +266,123 @@ function GuildsButton() {
         fetchCommands();
     }, [fetchCommands, fetchGuilds]);
 
-    const selectGuild = useCallback(
-        async (guildID, resetPage = true) => {
-            setSelectedGuildID(guildID);
+    const selectGuild = useCallback(async (guildID, resetPage = true) => {
+        setSelectedGuildID(guildID);
 
-            if (resetPage) {
-                setPage(1);
-            }
+        if (resetPage) {
+            setPage(1);
+        }
 
-            setMembers([]);
-            setRoles([]);
-            setChannels([]);
-            setWarnings([]);
-            setStatus('');
-            setError('');
-            setLoading(true);
+        setMembers([]);
+        setRoles([]);
+        setChannels([]);
+        setWarnings([]);
+        setBans([]);
+        setStatus('');
+        setError('');
+        setLoading(true);
 
-            try {
-                const currentPage = resetPage ? 1 : page;
+        try {
+            const [
+                rolesData,
+                channelsData,
+                settingsData,
+                warningsData,
+                twitchData,
+                welcomeData,
+                logSettingsData,
+            ] = await Promise.all([
+                requestJSON(`/api/roles/${guildID}`),
+                requestJSON(`/api/channels/${guildID}`),
+                requestJSON(`/api/settings/${guildID}`),
+                requestJSON(`/api/warnings/${guildID}`),
+                requestJSON(`/api/twitch/${guildID}`),
+                requestJSON(`/api/welcome/${guildID}`),
+                requestJSON(`/api/logs/${guildID}`),
+            ]);
 
-                const [
-                    membersData,
-                    rolesData,
-                    channelsData,
-                    settingsData,
-                    warningsData,
-                    twitchData,
-                    welcomeData,
-                ] = await Promise.all([
-                    requestJSON(`/api/members/${guildID}?page=${currentPage}`),
-                    requestJSON(`/api/roles/${guildID}`),
-                    requestJSON(`/api/channels/${guildID}`),
-                    requestJSON(`/api/settings/${guildID}`),
-                    requestJSON(`/api/warnings/${guildID}`),
-                    requestJSON(`/api/twitch/${guildID}`),
-                    requestJSON(`/api/welcome/${guildID}`),
-                ]);
+            setRoles(rolesData);
+            setChannels(channelsData);
+            setWarnings(warningsData);
+            setTwitchSettings(twitchData);
+            setWelcomeSettings(welcomeData);
 
-                setMembers(membersData.members);
-                setTotalPages(membersData.totalPages);
-                setRoles(rolesData);
-                setChannels(channelsData);
-                setWarnings(warningsData);
-                setTwitchSettings(twitchData);
-                setWelcomeSettings(welcomeData);
+            setLogSettings({
+                memberJoined: {
+                    enabled: Boolean(logSettingsData.memberJoined?.enabled),
+                    channelID: logSettingsData.memberJoined?.channelID || '',
+                },
+                memberLeft: {
+                    enabled: Boolean(logSettingsData.memberLeft?.enabled),
+                    channelID: logSettingsData.memberLeft?.channelID || '',
+                },
+                memberKicked: {
+                    enabled: Boolean(logSettingsData.memberKicked?.enabled),
+                    channelID: logSettingsData.memberKicked?.channelID || '',
+                },
+                memberBanned: {
+                    enabled: Boolean(logSettingsData.memberBanned?.enabled),
+                    channelID: logSettingsData.memberBanned?.channelID || '',
+                },
+                memberUnbanned: {
+                    enabled: Boolean(logSettingsData.memberUnbanned?.enabled),
+                    channelID: logSettingsData.memberUnbanned?.channelID || '',
+                },
+                timeoutGiven: {
+                    enabled: Boolean(logSettingsData.timeoutGiven?.enabled),
+                    channelID: logSettingsData.timeoutGiven?.channelID || '',
+                },
+                timeoutRemoved: { enabled: false, channelID: '' },
+            });
 
-                setSettings({
-                    autoroleID: settingsData.autoroleID || '',
-                    botroleID: settingsData.botroleID || '',
-                    welcomeChannelID: settingsData.welcomeChannelID || '',
-                    logChannelID: settingsData.logChannelID || '',
-                    eventChannelID: settingsData.eventChannelID || '',
-                    messageLogChannelID: settingsData.messageLogChannelID || '',
-                });
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [page]
-    );
+            setSettings({
+                autoroleID: settingsData.autoroleID || '',
+                botroleID: settingsData.botroleID || '',
+                welcomeChannelID: settingsData.welcomeChannelID || '',
+                logChannelID: settingsData.logChannelID || '',
+                eventChannelID: settingsData.eventChannelID || '',
+                messageLogChannelID: settingsData.messageLogChannelID || '',
+            });
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        if (selectedGuildID) {
-            selectGuild(selectedGuildID, false);
+        if (!selectedGuildID) {
+            setMembers([]);
+            setTotalPages(1);
+            return;
         }
-    }, [page, selectedGuildID, selectGuild]);
+
+        let cancelled = false;
+
+        async function loadMembers() {
+            try {
+                const data = await requestJSON(
+                    `/api/members/${selectedGuildID}?page=${page}`
+                );
+
+                if (!cancelled) {
+                    setMembers(data.members);
+                    setTotalPages(data.totalPages);
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    console.error('[Dashboard] Failed to load members:', err);
+                    setError(err.message);
+                }
+            }
+        }
+
+        loadMembers();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedGuildID, page]);
 
     async function saveSetting(field) {
         if (!selectedGuildID || !settings[field.key]) return;
@@ -236,7 +394,9 @@ function GuildsButton() {
         try {
             await requestJSON(field.endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
                     guildID: selectedGuildID,
                     roleID:
@@ -251,6 +411,33 @@ function GuildsButton() {
             });
 
             setStatus(`${field.label} is saved`);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setSavingKey('');
+        }
+    }
+
+    async function saveLogSettings() {
+        if (!selectedGuildID) return;
+
+        setSavingKey('memberLogs');
+        setStatus('');
+        setError('');
+
+        try {
+            await requestJSON('/api/logs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    guildID: selectedGuildID,
+                    logSettings,
+                }),
+            });
+
+            setStatus('Member log settings saved');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -418,6 +605,63 @@ function GuildsButton() {
         }
     }
 
+    async function handleGiveTimeout({ memberId, durationSeconds, reason }) {
+        try {
+            await requestJSON('/api/timeouts/give', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    guildID: selectedGuildID,
+                    memberId,
+                    durationSeconds,
+                    reason,
+                }),
+            });
+
+            setStatus('Timeout given successfully');
+            setError('');
+
+            await Promise.all([
+                loadTimeoutHistory(selectedGuildID),
+                requestJSON(`/api/timeouts/members/${selectedGuildID}`).then(
+                    (data) => setTimeoutMembers(data)
+                ),
+            ]);
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
+    async function handleRemoveTimeout({ memberId, reason }) {
+        try {
+            await requestJSON('/api/timeouts/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    guildID: selectedGuildID,
+                    memberId,
+                    reason,
+                }),
+            });
+
+            setStatus('Timeout removed successfully');
+            setError('');
+
+            await Promise.all([
+                loadTimeoutHistory(selectedGuildID),
+                requestJSON(`/api/timeouts/members/${selectedGuildID}`).then(
+                    (data) => setTimeoutMembers(data)
+                ),
+            ]);
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
     function removeStreamer(username) {
         setTwitchSettings((current) => ({
             ...current,
@@ -439,8 +683,10 @@ function GuildsButton() {
         <div className="dashboard-shell">
             <div className="dashboard-header">
                 <div>
-                    <p className="dashboard-kicker">DiscordBot dashboard</p>
-                    <h2>Server settings</h2>
+                    <p className="dashboard-kicker color-primary">
+                        DiscordBot dashboard
+                    </p>
+                    <h2 className="mb-2 color-primary">Server settings</h2>
                 </div>
 
                 <button
@@ -509,90 +755,105 @@ function GuildsButton() {
                             </p>
                         </div>
                     )}
-
                     {selectedGuild && (
                         <>
-                            <div className="selected-guild-info">
-                                <div className="server-heading">
-                                    <div>
-                                        <p className="dashboard-kicker">
-                                            Selected Server
-                                        </p>
-                                        <h3>{selectedGuild.name}</h3>
-                                    </div>
-
-                                    <span>
-                                        {selectedGuild.memberCount} members
-                                    </span>
-                                </div>
-                            </div>
-
                             <DashboardTabs
-                                activeTab={activeTab}
-                                setActiveTab={setActiveTab}
+                                activeTab={activeCategory}
+                                setActiveTab={setActiveCategory}
                             />
 
-                            {activeTab === 'settings' && (
-                                <SettingsPanel
-                                    settingFields={settingFields}
-                                    settings={settings}
-                                    roles={roles}
-                                    channels={channels}
-                                    updateSetting={updateSetting}
-                                    saveSetting={saveSetting}
-                                    savingKey={savingKey}
-                                />
-                            )}
+                            {activeCategory === 'General' && (
+                                <>
+                                    <GeneralTabs
+                                        activeTab={activeGeneralTab}
+                                        setActiveTab={setActiveGeneralTab}
+                                    />
 
-                            {activeTab === 'security' && (
-                                <SecurityPanel
-                                    warnings={warnings}
-                                    selectedGuildID={selectedGuildID}
-                                    selectGuild={selectGuild}
-                                />
-                            )}
+                                    {activeGeneralTab === 'Overview' && (
+                                        <div className="panel">
+                                            <h3>Overview</h3>
+                                            <p>
+                                                Server overview will be
+                                                displayed here.
+                                            </p>
+                                        </div>
+                                    )}
 
-                            {activeTab === 'commands' && (
-                                <CommandsPanel commands={commands} />
-                            )}
+                                    {activeGeneralTab === 'Commands' && (
+                                        <CommandsPanel commands={commands} />
+                                    )}
 
-                            {activeTab === 'Members' && (
-                                <MembersPanel
-                                    members={members}
-                                    page={page}
-                                    totalPages={totalPages}
-                                    setPage={setPage}
-                                />
-                            )}
+                                    {activeGeneralTab === 'Members' && (
+                                        <MembersPanel
+                                            members={members}
+                                            page={page}
+                                            totalPages={totalPages}
+                                            setPage={setPage}
+                                        />
+                                    )}
 
-                            {activeTab === 'twitch' && (
-                                <div className="twitch-panel">
-                                    <div className="panel">
-                                        <TwitchPanel
-                                            twitchSettings={twitchSettings}
-                                            setTwitchSettings={
-                                                setTwitchSettings
+                                    {activeGeneralTab === 'Roles' && (
+                                        <div className="panel">
+                                            <h3>Roles</h3>
+                                            <p>
+                                                Role information will be
+                                                displayed here.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {activeGeneralTab === 'Server Info' && (
+                                        <div className="panel">
+                                            <h3>Server Info</h3>
+                                            <p>
+                                                Server information will be
+                                                displayed here.
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {activeCategory === 'Security' && (
+                                <>
+                                    <SecurityTabs
+                                        activeTab={activeSecurityTab}
+                                        setActiveTab={setActiveSecurityTab}
+                                    />
+
+                                    {activeSecurityTab === 'Warnings' && (
+                                        <WarningsPanel
+                                            warnings={warnings}
+                                            selectedGuildID={selectedGuildID}
+                                            selectGuild={selectGuild}
+                                        />
+                                    )}
+
+                                    {activeSecurityTab === 'Ban List' && (
+                                        <BanListPanel
+                                            bans={bans}
+                                            selectedGuildID={selectedGuildID}
+                                            refreshBans={refreshBans}
+                                        />
+                                    )}
+                                    {activeSecurityTab === 'User Timeouts' && (
+                                        <TimeoutPanel
+                                            members={timeoutMembers}
+                                            loading={timeoutMembersLoading}
+                                            selectedGuildID={selectedGuildID}
+                                            selectGuild={selectGuild}
+                                            onGiveTimeout={handleGiveTimeout}
+                                            onRemoveTimeout={
+                                                handleRemoveTimeout
                                             }
-                                            channels={channels}
-                                            saveTwitchSettings={
-                                                saveTwitchSettings
-                                            }
-                                            testTwitchAlert={testTwitchAlert}
-                                            roles={roles}
-                                            loadStreamer={loadStreamer}
-                                            removeStreamer={removeStreamer}
-                                            editingStreamer={editingStreamer}
-                                            setEditingStreamer={
-                                                setEditingStreamer
+                                            timeoutHistory={timeoutHistory}
+                                            timeoutHistoryLoading={
+                                                timeoutHistoryLoading
                                             }
                                         />
-                                    </div>
-                                </div>
-                            )}
+                                    )}
 
-                            {activeTab === 'welcome' && (
-                                <div className="welcome-panel-wrapper">
-                                    <div className="panel">
+                                    {activeSecurityTab ===
+                                        'Welcome Messages' && (
                                         <WelcomePanel
                                             welcomeSettings={welcomeSettings}
                                             setWelcomeSettings={
@@ -606,8 +867,99 @@ function GuildsButton() {
                                                 testWelcomeMessage
                                             }
                                         />
-                                    </div>
-                                </div>
+                                    )}
+
+                                    {activeSecurityTab === 'Auto Roles' && (
+                                        <SettingsPanel
+                                            settingFields={settingFields.filter(
+                                                (field) =>
+                                                    field.key ===
+                                                        'autoroleID' ||
+                                                    field.key === 'botroleID'
+                                            )}
+                                            settings={settings}
+                                            roles={roles}
+                                            channels={channels}
+                                            updateSetting={updateSetting}
+                                            saveSetting={saveSetting}
+                                            savingKey={savingKey}
+                                        />
+                                    )}
+                                </>
+                            )}
+
+                            {activeCategory === 'Moderation' && (
+                                <>
+                                    <ModerationTabs
+                                        activeTab={activeModerationTab}
+                                        setActiveTab={setActiveModerationTab}
+                                    />
+
+                                    {activeModerationTab === 'Logs' && (
+                                        <LogsPanel
+                                            logSettings={logSettings}
+                                            setLogSettings={setLogSettings}
+                                            channels={channels}
+                                            saveLogSettings={saveLogSettings}
+                                        />
+                                    )}
+                                </>
+                            )}
+
+                            {activeCategory === 'Notifications' && (
+                                <>
+                                    <NotificationTabs
+                                        activeTab={activeNotificationTab}
+                                        setActiveTab={setActiveNotificationTab}
+                                    />
+
+                                    {activeNotificationTab === 'Twitch' && (
+                                        <div className="twitch-panel">
+                                            <div className="panel">
+                                                <TwitchPanel
+                                                    twitchSettings={
+                                                        twitchSettings
+                                                    }
+                                                    setTwitchSettings={
+                                                        setTwitchSettings
+                                                    }
+                                                    channels={channels}
+                                                    saveTwitchSettings={
+                                                        saveTwitchSettings
+                                                    }
+                                                    testTwitchAlert={
+                                                        testTwitchAlert
+                                                    }
+                                                    roles={roles}
+                                                    loadStreamer={loadStreamer}
+                                                    removeStreamer={
+                                                        removeStreamer
+                                                    }
+                                                    editingStreamer={
+                                                        editingStreamer
+                                                    }
+                                                    setEditingStreamer={
+                                                        setEditingStreamer
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {activeCategory === 'Module Settings' && (
+                                <SettingsPanel
+                                    settingFields={settingFields.filter(
+                                        (field) =>
+                                            field.key === 'eventChannelID'
+                                    )}
+                                    settings={settings}
+                                    roles={roles}
+                                    channels={channels}
+                                    updateSetting={updateSetting}
+                                    saveSetting={saveSetting}
+                                    savingKey={savingKey}
+                                />
                             )}
                         </>
                     )}
@@ -616,5 +968,4 @@ function GuildsButton() {
         </div>
     );
 }
-
 export default GuildsButton;

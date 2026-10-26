@@ -1,65 +1,60 @@
-.footer{
-  margin-top:140px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #101114,
-      #08090c
-    );
-
-  padding:70px 40px;
-
-  color:white;
+.footer {
+    margin-top: 140px;
+    background: linear-gradient(180deg, #101114, #08090c);
+    padding: 70px 40px;
+    color: white;
 }
 
-.footer-container{
-  max-width:1400px;
-
-  margin:0 auto;
-
-  display:grid;
-
-  grid-template-columns:
-    1.5fr 1fr 1fr;
-
-  gap:50px;
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 50px;
 }
 
-.footer-left h4{
-  font-size:34px;
-  margin-bottom:20px;
+.footer-left h4 {
+    font-size: 34px;
+    margin-bottom: 20px;
 }
 
-.footer-left p{
-  line-height:1.8;
-  color:#d1d5db;
+.footer-left p {
+    line-height: 1.8;
+    color: #d1d5db;
 }
 
-.footer-contact{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-.footer-contact h5{
-  font-size:20px;
-  margin-bottom:12px;
+.footer-right h5 {
+    font-size: 20px;
+    margin-bottom: 12px;
 }
 
-.footer-contact a{
-  color:#d1d5db;
-  text-decoration:none;
+.footer-right a {
+    color: #d1d5db;
+    text-decoration: none;
 }
 
-.footer-contact a:hover{
-  color:#7c4dff;
+.footer-right a:hover {
+    color: #7c4dff;
 }
 
-@media(max-width:900px){
+.footer-logo img {
+    width: 400px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
 
-  .footer-container{
-    grid-template-columns:1fr;
-  }
-
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
 }
