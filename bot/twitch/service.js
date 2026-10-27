@@ -11,13 +11,10 @@ const db = new QuickDB();
 
 async function startTwitchService(client) {
     if (twitchStarted) {
-        console.log('[TWITCH] Service already running');
         return;
     }
 
     twitchStarted = true;
-
-    console.log('[TWITCH] Service started');
 
     setInterval(async () => {
         try {
@@ -31,8 +28,6 @@ async function startTwitchService(client) {
                 return;
             }
 
-            console.log(`[TWITCH] Checking ${twitchConfigs.length} streamers`);
-
             for (const config of twitchConfigs) {
                 const guildID = config.id.replace('twitch_', '');
 
@@ -41,13 +36,9 @@ async function startTwitchService(client) {
                 const streamers = settings.streamers || [];
 
                 for (const streamer of streamers) {
-                    console.log(`[TWITCH] Checking ${streamer.username}`);
-
                     const stream = await getStream(streamer.username);
 
                     if (!stream) {
-                        console.log(`[TWITCH] ${streamer.username} is offline`);
-
                         const liveKey = `twitch_live_${guildID}_${streamer.username}`;
 
                         await db.delete(liveKey);
@@ -60,10 +51,6 @@ async function startTwitchService(client) {
                     const alreadyLive = await db.get(liveKey);
 
                     if (alreadyLive) {
-                        console.log(
-                            `[TWITCH] ${streamer.username} already announced`
-                        );
-
                         continue;
                     }
 

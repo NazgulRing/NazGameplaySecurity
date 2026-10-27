@@ -19,9 +19,8 @@ async function getServerInfo() {
             timeout: 5000,
         });
 
-        console.log('[ASA RCON] Sending ListPlayers...');
         const response = await rcon.send('ListPlayers');
-        console.log('[ASA RCON] ListPlayers-response:', response);
+
         const text = String(response || '').trim();
 
         const players =
@@ -33,7 +32,6 @@ async function getServerInfo() {
                       .filter((line) => /^\d+\.\s+\S/.test(line))
                       .map((line) => line.replace(/^\d+\.\s*/, ''));
 
-        console.log('[ASA RCON] Players found:', players.length);
         return {
             online: true,
             players,

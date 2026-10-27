@@ -82,50 +82,6 @@ function formatTimeoutAction(action) {
     return labels[action] || action || 'Timeout-history';
 }
 
-function formatDuration(seconds) {
-    if (!Number.isFinite(Number(seconds)) || Number(seconds) <= 0) {
-        return null;
-    }
-
-    let remaining = Number(seconds);
-    const units = [
-        ['dager', 86400],
-        ['timer', 3600],
-        ['minutter', 60],
-        ['sekunder', 1],
-    ];
-
-    const parts = [];
-
-    for (const [label, size] of units) {
-        const amount = Math.floor(remaining / size);
-
-        if (amount > 0) {
-            parts.push(`${amount} ${label}`);
-            remaining %= size;
-        }
-    }
-
-    return parts.join(', ');
-}
-
-function formatHistoryDate(timestamp) {
-    if (!timestamp) return 'Ukjent';
-
-    const numeric = Number(timestamp);
-    const date = new Date(
-        Number.isFinite(numeric) && numeric > 1e12
-            ? numeric
-            : Number.isFinite(numeric) && numeric > 0
-              ? numeric * 1000
-              : timestamp
-    );
-
-    return Number.isNaN(date.getTime())
-        ? 'Ukjent'
-        : date.toLocaleString('nb-NO');
-}
-
 function TimeoutPanel({
     members = [],
     activeTimeouts,

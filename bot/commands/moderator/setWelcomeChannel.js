@@ -1,59 +1,70 @@
-const { SlashCommandBuilder,PermissionsBitField, EmbedBuilder } = require("discord.js");
-const { QuickDB } = require("quick.db");
+const {
+    SlashCommandBuilder,
+    PermissionsBitField,
+    EmbedBuilder,
+    MessageFlags,
+} = require('discord.js');
+const { QuickDB } = require('quick.db');
 const db = new QuickDB();
 
 module.exports = {
-   category: "Moderation",
-  data: new SlashCommandBuilder()
-    .setName("setwelcomechannel")
-    .setDescription("Set welcome channel")
-    .addChannelOption(option => 
-      option
-        .setName("channel")
-        .setDescription("The channel you want to set as welcome channel")
-        .setRequired(true)
-    ),
-  async execute(interaction){
-    if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator))
-      return await interaction.reply({content: "You cannot set an welcome channel", ephemeral: true});
+    category: 'Moderation',
+    data: new SlashCommandBuilder()
+        .setName('setwelcomechannel')
+        .setDescription('Set welcome channel')
+        .addChannelOption((option) =>
+            option
+                .setName('channel')
+                .setDescription(
+                    'The channel you want to set as welcome channel'
+                )
+                .setRequired(true)
+        ),
+    async execute(interaction) {
+        if (
+            !interaction.member.permissions.has(
+                PermissionsBitField.Flags.Administrator
+            )
+        )
+            return await interaction.reply({
+                content: 'You cannot set an welcome channel',
+                flags: MessageFlags.Ephemeral,
+            });
 
-    const channel = interaction.options.getChannel("channel", true);
+        const channel = interaction.options.getChannel('channel', true);
 
-    const current =
-  await db.get(
-    `welcomeSettings_${interaction.guild.id}`
-  ) || {};
+        const current =
+            (await db.get(`welcomeSettings_${interaction.guild.id}`)) || {};
 
-await db.set(
-  `welcomeSettings_${interaction.guild.id}`,
-  {
-    enabled: true,
+        await db.set(`welcomeSettings_${interaction.guild.id}`, {
+            enabled: true,
 
-    title:
-      current.title || "Velkommen!",
+            title: current.title || 'Velkommen!',
 
-    message:
-      current.message ||
-      "{user} har blitt med i serveren.",
+            message: current.message || '{user} har blitt med i serveren.',
 
-    color:
-      current.color || "#57F287",
+            color: current.color || '#57F287',
 
-    thumbnail:
-      current.thumbnail || "",
+            thumbnail: current.thumbnail || '',
 
-    mention:
-      current.mention ?? true,
+            mention: current.mention ?? true,
 
-    channelID: channel.id,
-  }
-);
+            channelID: channel.id,
+        });
 
-    const embed = new EmbedBuilder()
-      .setColor("Blue")
-      .setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.displayAvatarURL()})
-      .setDescription(`:white_check_mark: Your welcome chat has been set to ${channel}`)
+        const embed = new EmbedBuilder()
+            .setColor('Blue')
+            .setAuthor({
+                name: interaction.client.user.username,
+                iconURL: interaction.client.user.displayAvatarURL(),
+            })
+            .setDescription(
+                `:white_check_mark: Your welcome chat has been set to ${channel}`
+            );
 
-      await interaction.reply({embeds: [embed]});
-  }
-}
+        await interaction.reply({
+            embeds: [embed],
+            flags: MessageFlags.Ephemeral,
+        });
+    },
+};

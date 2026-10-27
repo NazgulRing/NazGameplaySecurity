@@ -1,4 +1,3 @@
-console.log('SETTINGS ROUTER FILE LOADED');
 const express = require('express');
 const { QuickDB } = require('quick.db');
 const db = new QuickDB();
@@ -8,7 +7,8 @@ const {
 const { ChannelType, EmbedBuilder, AuditLogEvent } = require('discord.js');
 const guildMemberAdd = require('../../bot/events/guildMemberAdd.js');
 const { getUser } = require('../../bot/twitch/api.js');
-console.log('REGISTERING API ROUTER');
+const { channel } = require('node:diagnostics_channel');
+
 function createSettingsRouter(client) {
     const router = express.Router();
 
@@ -485,7 +485,6 @@ function createSettingsRouter(client) {
     });
 
     router.post('/log-animation', async (req, res) => {
-        console.log('✅ Animasjonsside startet!');
         res.json({ success: true });
     });
 
@@ -535,8 +534,6 @@ function createSettingsRouter(client) {
             const updatedStreamers = await Promise.all(
                 (streamers || []).map(async (streamer) => {
                     const twitchUser = await getUser(streamer.username);
-
-                    console.log(twitchUser);
 
                     return {
                         ...streamer,
@@ -589,10 +586,6 @@ function createSettingsRouter(client) {
                 });
             }
 
-            console.log('WELCOME SETTINGS:');
-            console.log(settings);
-            console.log('CHANNEL ID:');
-            console.log(settings.channelID);
             const channel = guild.channels.cache.get(settings.channelID);
 
             if (!channel) {
@@ -725,8 +718,6 @@ function createSettingsRouter(client) {
         }
     });
 
-    console.log('REGISTERING WELCOME TEST ROUTE');
-
     router.post('/welcome/test', async (req, res) => {
         const { guildID, settings } = req.body;
 
@@ -739,7 +730,6 @@ function createSettingsRouter(client) {
                 });
             }
 
-            console.log(settings);
             const channel = guild.channels.cache.get(settings.channelID);
 
             if (!channel) {
@@ -812,6 +802,30 @@ function createSettingsRouter(client) {
                 memberUnbanned: { enabled: false, channelID: '' },
                 timeoutGiven: { enabled: false, channelID: '' },
                 timeoutRemoved: { enabled: false, channelID: '' },
+                roleGiven: { enabled: false, channelID: '' },
+                roleRemoved: { enabled: false, channelID: '' },
+                nicknameChanged: { enabled: false, channelID: '' },
+                messageDeleted: { enabled: false, channelID: '' },
+                messageEdited: { enabled: false, channelID: '' },
+                memberJoinedVoice: { enabled: false, channelID: '' },
+                memberLeftVoice: { enabled: false, channelID: '' },
+                memberMovedVoice: { enabled: false, channelID: '' },
+                memberSwitchedVoice: { enabled: false, channelID: '' },
+                voiceMute: { enabled: false, channelID: '' },
+                voiceDeafen: { enabled: false, channelID: '' },
+                channelCreated: { enabled: false, channelID: '' },
+                channelDeleted: { enabled: false, channelID: '' },
+                channelUpdated: { enabled: false, channelID: '' },
+                threadCreated: { enabled: false, channelID: '' },
+                threadDeleted: { enabled: false, channelID: '' },
+                threadUpdated: { enabled: false, channelID: '' },
+                channelPermissionsUpdated: { enabled: false, channelID: '' },
+                roleCreated: { enabled: false, channelID: '' },
+                roleDeleted: { enabled: false, channelID: '' },
+                roleUpdated: { enabled: false, channelID: '' },
+                serverUpdated: { enabled: false, channelID: '' },
+                moderationCommandUsed: { enabled: false, channelID: '' },
+                serverInvites: { enabled: false, channelID: '' },
             };
 
             const savedSettings =
@@ -858,6 +872,30 @@ function createSettingsRouter(client) {
                 'memberUnbanned',
                 'timeoutGiven',
                 'timeoutRemoved',
+                'roleGiven',
+                'roleRemoved',
+                'nicknameChanged',
+                'messageDeleted',
+                'messageEdited',
+                'memberJoinedVoice',
+                'memberLeftVoice',
+                'memberMovedVoice',
+                'memberSwitchedVoice',
+                'voiceMute',
+                'voiceDeafen',
+                'channelCreated',
+                'channelDeleted',
+                'channelUpdated',
+                'threadCreated',
+                'threadDeleted',
+                'threadUpdated',
+                'channelPermissionsUpdated',
+                'roleCreated',
+                'roleDeleted',
+                'roleUpdated',
+                'serverUpdated',
+                'moderationCommandUsed',
+                'serverInvites',
             ];
 
             const settings = {};
@@ -996,7 +1034,4 @@ function createSettingsRouter(client) {
 
     return router;
 }
-
-console.log('SETTINGS ROUTER LOADED');
-
 module.exports = createSettingsRouter;

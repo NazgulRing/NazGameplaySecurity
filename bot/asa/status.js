@@ -41,8 +41,6 @@ async function checkServerStatus(client) {
                     status: 'offline',
                     playerCount: 0,
                 });
-
-                console.log('[ASA] Server not responding.');
             }
 
             previousStatus = false;
@@ -57,11 +55,8 @@ async function checkServerStatus(client) {
                 playerCount: info.playerCount,
             });
 
-            console.log('[ASA] Server is online.');
-
             previousStatus = true;
             previousPlayers = [...info.players];
-            console.log(`[ASA] Players online: ${info.playerCount}`);
             return;
         }
 
@@ -80,10 +75,6 @@ async function checkServerStatus(client) {
                 status: 'online',
                 playerCount: info.playerCount,
             });
-
-            console.log(
-                `[ASA] Player list changed. Players online: ${info.playerCount}`
-            );
         }
 
         previousPlayers = [...newPlayers];

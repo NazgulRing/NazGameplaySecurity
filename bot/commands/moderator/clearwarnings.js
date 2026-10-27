@@ -1,7 +1,9 @@
+const { moderationCommandUsed } = require('../../events/memberLogs.js');
 const {
     SlashCommandBuilder,
     PermissionsBitField,
     EmbedBuilder,
+    MessageFlags,
 } = require('discord.js');
 const { QuickDB } = require('quick.db');
 
@@ -35,7 +37,7 @@ module.exports = {
         ) {
             return interaction.reply({
                 content: 'You do not have permission to use this command.',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -51,7 +53,7 @@ module.exports = {
         if (warnNum > warns) {
             return interaction.reply({
                 content: `You can only clear a maximum of ${warns} warning(s) for ${member.tag}.`,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -75,6 +77,12 @@ module.exports = {
                 `:white_check_mark: ${member.tag} now has ${remainingWarnings} warning(s).`
             );
 
-        return interaction.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
+
+        await moderationCommandUsed(
+            interaction,
+            member,
+            `Cleared ${warnNum} warning(s). ${remainingWarnings} warning(s) remaining.`
+        );
     },
 };

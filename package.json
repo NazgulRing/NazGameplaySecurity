@@ -26,15 +26,11 @@
 
     "dependencies": {
 
-        "@discordjs/builders": "github:discordjs/builders",
-
         "@napi-rs/canvas": "^1.0.0",
 
         "axios": "^1.16.0",
 
         "better-sqlite3": "^11.1.2",
-
-        "canvacord": "^6.0.4",
 
         "canvas": "^3.2.3",
 
@@ -46,9 +42,7 @@
 
         "discord-builder": "^1.1.5",
 
-        "discord-player": "^6.7.1",
-
-        "discord.js": "^14.12.1",
+        "discord.js": "^14.27.0",
 
         "dotenv": "^16.6.1",
 
@@ -76,7 +70,9 @@
 
     },
 
-    "description": ""
+    "description": "",
+
+    "overrides": {}
 
 }
 

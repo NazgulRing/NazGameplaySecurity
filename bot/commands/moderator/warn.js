@@ -1,5 +1,10 @@
+const { moderationCommandUsed } = require('../../events/memberLogs.js');
 const { SlashCommandBuilder } = require('discord.js');
-const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const {
+    PermissionsBitField,
+    EmbedBuilder,
+    MessageFlags,
+} = require('discord.js');
 const { randomUUID } = require('node:crypto');
 const { QuickDB } = require('quick.db');
 const db = new QuickDB();
@@ -31,7 +36,7 @@ module.exports = {
             return await interaction.reply({
                 content:
                     'This command can only be used in a server by members with Kick Members permission.',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         const member = interaction.options.getUser('target');
@@ -39,7 +44,7 @@ module.exports = {
         if (member.id === interaction.client.user.id) {
             return await interaction.reply({
                 content: 'You cannot warn the bot itself.',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -73,5 +78,6 @@ module.exports = {
             createdAt: new Date().toISOString(),
         });
         await db.set(warningKey, warnings);
+        await moderationCommandUsed(interaction, member, reason);
     },
 };

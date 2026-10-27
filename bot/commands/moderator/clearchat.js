@@ -1,5 +1,9 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const {
+    PermissionsBitField,
+    EmbedBuilder,
+    MessageFlags,
+} = require('discord.js');
 
 module.exports = {
     category: 'Moderation',
@@ -31,7 +35,7 @@ module.exports = {
         if (!interaction.member.permissions.has('MANAGE_MESSAGES'))
             return await interaction.reply({
                 content: 'You do not have permission to use this command',
-                epheneral: true,
+                flags: MessageFlags.Ephemeral,
             });
 
         const member = interaction.options.getUser('target');
@@ -41,7 +45,7 @@ module.exports = {
         if (!amount || amount > 100 || amount < 1) {
             return await interaction.reply({
                 content: `Please specify an amount between 1 and 100 before deleting messages`,
-                epheneral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -51,14 +55,14 @@ module.exports = {
             if (channelMessages.size === 0) {
                 return await interaction.reply({
                     content: `There are no messages in this channel to delete`,
-                    epheneral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
 
             if (amount > channelMessages.size) amount = channelMessages.size;
 
             const clearEmbed = new EmbedBuilder().setColor('Green');
-            await interaction.deferReply({ epheneral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
             let messagesToDelete = [];
 
@@ -93,7 +97,7 @@ module.exports = {
             console.log(error);
             await interaction.reply({
                 content: 'An error occured while clearing messages',
-                epheneral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
     },

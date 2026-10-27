@@ -1,11 +1,6 @@
 const { checkServerStatus } = require('./status');
 
 function startAsaService(client) {
-    console.log('[ASA] Starting server monitoring...');
-
-    // Første sjekk med en gang.
-    console.log('[ASA] Starting first status check...');
-
     checkServerStatus(client)
         .then(() => console.log('[ASA] First status check completed.'))
         .catch((error) => console.error('[ASA] Error in status check:', error));

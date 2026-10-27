@@ -97,6 +97,31 @@ function GuildsButton() {
         memberBanned: { enabled: false, channelID: '' },
         memberUnbanned: { enabled: false, channelID: '' },
         timeoutGiven: { enabled: false, channelID: '' },
+        timeoutRemoved: { enabled: false, channelID: '' },
+        roleGiven: { enabled: false, channelID: '' },
+        roleRemoved: { enabled: false, channelID: '' },
+        nicknameChanged: { enabled: false, channelID: '' },
+        messageDeleted: { enabled: false, channelID: '' },
+        messageEdited: { enabled: false, channelID: '' },
+        memberJoinedVoice: { enabled: false, channelID: '' },
+        memberLeftVoice: { enabled: false, channelID: '' },
+        memberMovedVoice: { enabled: false, channelID: '' },
+        memberSwitchedVoice: { enabled: false, channelID: '' },
+        voiceMute: { enabled: false, channelID: '' },
+        voiceDeafen: { enabled: false, channelID: '' },
+        channelCreated: { enabled: false, channelID: '' },
+        channelDeleted: { enabled: false, channelID: '' },
+        channelUpdated: { enabled: false, channelID: '' },
+        threadCreated: { enabled: false, channelID: '' },
+        threadDeleted: { enabled: false, channelID: '' },
+        threadUpdated: { enabled: false, channelID: '' },
+        channelPermissionsUpdated: { enabled: false, channelID: '' },
+        roleCreated: { enabled: false, channelID: '' },
+        roleDeleted: { enabled: false, channelID: '' },
+        roleUpdated: { enabled: false, channelID: '' },
+        serverUpdated: { enabled: false, channelID: '' },
+        moderationCommandUsed: { enabled: false, channelID: '' },
+        serverInvites: { enabled: false, channelID: '' },
     });
     const [timeoutMembers, setTimeoutMembers] = useState([]);
     const [timeoutMembersLoading, setTimeoutMembersLoading] = useState(false);
@@ -190,20 +215,11 @@ function GuildsButton() {
         let cancelled = false;
 
         async function loadTimeoutMembers() {
-            console.log('[Timeout UI] Starting member fetch');
             setTimeoutMembersLoading(true);
 
             try {
                 const data = await requestJSON(
                     `/api/timeouts/members/${selectedGuildID}`
-                );
-
-                console.log('[Timeout UI] API response:', data);
-                console.log(
-                    '[Timeout UI] Members received:',
-                    Array.isArray(data)
-                        ? data.length
-                        : 'Response is not an array'
                 );
 
                 if (!cancelled) {
@@ -217,8 +233,6 @@ function GuildsButton() {
                     setError(err.message);
                 }
             } finally {
-                console.log('[Timeout UI] Finished. Cancelled:', cancelled);
-
                 if (!cancelled) {
                     setTimeoutMembersLoading(false);
                 }
@@ -332,7 +346,121 @@ function GuildsButton() {
                     enabled: Boolean(logSettingsData.timeoutGiven?.enabled),
                     channelID: logSettingsData.timeoutGiven?.channelID || '',
                 },
-                timeoutRemoved: { enabled: false, channelID: '' },
+                timeoutRemoved: {
+                    enabled: Boolean(logSettingsData.timeoutRemoved?.enabled),
+                    channelID: logSettingsData.timeoutRemoved?.channelID || '',
+                },
+                roleGiven: {
+                    enabled: Boolean(logSettingsData.roleGiven?.enabled),
+                    channelID: logSettingsData.roleGiven?.channelID || '',
+                },
+                roleRemoved: {
+                    enabled: Boolean(logSettingsData.roleRemoved?.enabled),
+                    channelID: logSettingsData.roleRemoved?.channelID || '',
+                },
+                nicknameChanged: {
+                    enabled: Boolean(logSettingsData.nicknameChanged?.enabled),
+                    channelID: logSettingsData.nicknameChanged?.channelID || '',
+                },
+                messageDeleted: {
+                    enabled: Boolean(logSettingsData.messageDeleted?.enabled),
+                    channelID: logSettingsData.messageDeleted?.channelID || '',
+                },
+                messageEdited: {
+                    enabled: Boolean(logSettingsData.messageEdited?.enabled),
+                    channelID: logSettingsData.messageEdited?.channelID || '',
+                },
+                memberJoinedVoice: {
+                    enabled: Boolean(
+                        logSettingsData.memberJoinedVoice?.enabled
+                    ),
+                    channelID:
+                        logSettingsData.memberJoinedVoice?.channelID || '',
+                },
+                memberLeftVoice: {
+                    enabled: Boolean(logSettingsData.memberLeftVoice?.enabled),
+                    channelID: logSettingsData.memberLeftVoice?.channelID || '',
+                },
+                memberMovedVoice: {
+                    enabled: Boolean(logSettingsData.memberMovedVoice?.enabled),
+                    channelID:
+                        logSettingsData.memberMovedVoice?.channelID || '',
+                },
+                memberSwitchedVoice: {
+                    enabled: Boolean(
+                        logSettingsData.memberSwitchedVoice?.enabled
+                    ),
+                    channelID:
+                        logSettingsData.memberSwitchedVoice?.channelID || '',
+                },
+                voiceMute: {
+                    enabled: Boolean(logSettingsData.voiceMute?.enabled),
+                    channelID: logSettingsData.voiceMute?.channelID || '',
+                },
+                voiceDeafen: {
+                    enabled: Boolean(logSettingsData.voiceDeafen?.enabled),
+                    channelID: logSettingsData.voiceDeafen?.channelID || '',
+                },
+                channelCreated: {
+                    enabled: Boolean(logSettingsData.channelCreated?.enabled),
+                    channelID: logSettingsData.channelCreated?.channelID || '',
+                },
+                channelDeleted: {
+                    enabled: Boolean(logSettingsData.channelDeleted?.enabled),
+                    channelID: logSettingsData.channelDeleted?.channelID || '',
+                },
+                channelUpdated: {
+                    enabled: Boolean(logSettingsData.channelUpdated?.enabled),
+                    channelID: logSettingsData.channelUpdated?.channelID || '',
+                },
+                threadCreated: {
+                    enabled: Boolean(logSettingsData.threadCreated?.enabled),
+                    channelID: logSettingsData.threadCreated?.channelID || '',
+                },
+                threadDeleted: {
+                    enabled: Boolean(logSettingsData.threadDeleted?.enabled),
+                    channelID: logSettingsData.threadDeleted?.channelID || '',
+                },
+                threadUpdated: {
+                    enabled: Boolean(logSettingsData.threadUpdated?.enabled),
+                    channelID: logSettingsData.threadUpdated?.channelID || '',
+                },
+                channelPermissionsUpdated: {
+                    enabled: Boolean(
+                        logSettingsData.channelPermissionsUpdated?.enabled
+                    ),
+                    channelID:
+                        logSettingsData.channelPermissionsUpdated?.channelID ||
+                        '',
+                },
+
+                roleCreated: {
+                    enabled: Boolean(logSettingsData.roleCreated?.enabled),
+                    channelID: logSettingsData.roleCreated?.channelID || '',
+                },
+                roleDeleted: {
+                    enabled: Boolean(logSettingsData.roleDeleted?.enabled),
+                    channelID: logSettingsData.roleDeleted?.channelID || '',
+                },
+                roleUpdated: {
+                    enabled: Boolean(logSettingsData.roleUpdated?.enabled),
+                    channelID: logSettingsData.roleUpdated?.channelID || '',
+                },
+                serverUpdated: {
+                    enabled: Boolean(logSettingsData.serverUpdated?.enabled),
+                    channelID: logSettingsData.serverUpdated?.channelID || '',
+                },
+                moderationCommandUsed: {
+                    enabled: Boolean(
+                        logSettingsData.moderationCommandUsed?.enabled
+                    ),
+                    channelID:
+                        logSettingsData.moderationCommandUsed?.channelID || '',
+                },
+                serverInvites: {
+                    enabled: Boolean(logSettingsData.serverInvites?.enabled),
+                    channelID: logSettingsData.serverInvites?.channelID || '',
+                },
             });
 
             setSettings({

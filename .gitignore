@@ -1,2 +1,11 @@
 node_modules
 .env
+client/node_modules/
+client/build/
+.env
+.env.*
+!.env.example
+audit-report.json
+client-audit.json
+package-lock.json.backup
+package.json.backup

@@ -15,6 +15,22 @@ const {
     memberBanned,
     memberUnbanned,
     timeoutGiven,
+    memberUpdated,
+    messageDeleted,
+    messageEdited,
+    voiceStateUpdated,
+    channelCreated,
+    channelDeleted,
+    channelUpdated,
+    threadCreated,
+    threadDeleted,
+    threadUpdated,
+    roleCreated,
+    roleDeleted,
+    roleUpdated,
+    serverUpdated,
+    serverInviteCreated,
+    serverInviteDeleted,
 } = require('../bot/events/memberLogs.js');
 
 function keepAlive(client, app) {
@@ -77,10 +93,40 @@ function keepAlive(client, app) {
     client.on('guildMemberAdd', guildMemberAdd);
     client.on('guildMemberAdd', memberJoined);
     client.on('guildMemberRemove', memberLeft);
-    client.on('guildMemberUpdate', timeoutGiven);
+    client.on('guildMemberUpdate', async (oldMember, newMember) => {
+        await timeoutGiven(oldMember, newMember);
+        await memberUpdated(oldMember, newMember);
+    });
+
+    client.on('roleCreate', roleCreated);
+    client.on('roleDelete', roleDeleted);
+    client.on('roleUpdate', roleUpdated);
+
+    client.on('inviteCreate', serverInviteCreated);
+    client.on('inviteDelete', serverInviteDeleted);
+
+    client.on('channelCreate', channelCreated);
+    client.on('channelDelete', channelDeleted);
+    client.on('channelUpdate', channelUpdated);
+    client.on('guildUpdate', serverUpdated);
+
+    client.on('threadCreate', threadCreated);
+    client.on('threadDelete', threadDeleted);
+    client.on('threadUpdate', threadUpdated);
 
     client.on('guildBanAdd', memberBanned);
     client.on('guildBanRemove', memberUnbanned);
+    // Message Logs
+    client.on('messageDelete', messageDeleted);
+
+    client.on('messageUpdate', async (oldMessage, newMessage) => {
+        await messageEdited(oldMessage, newMessage);
+    });
+
+    // Voice Logs
+    client.on('voiceStateUpdate', async (oldState, newState) => {
+        await voiceStateUpdated(oldState, newState);
+    });
     /*Run the Case animasjon site */
     app.use(express.static(path.join(__dirname, 'client', 'build')));
 

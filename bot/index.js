@@ -25,6 +25,7 @@ const client = new Client({
         IntentsBitField.Flags.MessageContent,
         IntentsBitField.Flags.GuildVoiceStates,
         IntentsBitField.Flags.GuildModeration,
+        IntentsBitField.Flags.GuildInvites,
     ],
 });
 
@@ -138,6 +139,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.inGuild() || !interaction.guild) return;
 
     const { user, guild, commandName } = interaction;
+    const moderationCommands = [
+        'warn',
+        'clearwarns',
+        'kick',
+        'ban',
+        'timeout',
+        'untimeout',
+    ];
+
+    if (moderationCommands.includes(commandName.toLowerCase())) {
+        return;
+    }
     const logChannelID = await db.get(`setLogChat_${guild.id}`);
 
     if (!logChannelID) {
@@ -267,7 +280,7 @@ const keepAlive = require('../server/server');
 
 let servicesStarted = false;
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     console.log('🤖 Bot is online!');
 
     // Start Express umiddelbart når Discord er klar.
@@ -298,7 +311,6 @@ client.once('ready', async () => {
     setInterval(
         async () => {
             try {
-                console.log('🔄 Syncing commands...');
                 await updateCommands(client);
             } catch (error) {
                 console.error('❌ Error syncing commands:', error);

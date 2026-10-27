@@ -46,8 +46,6 @@ async function updateCommands(client) {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
     try {
-        console.log('Started refreshing apllication (/) commands.');
-
         const guildIds = client.guilds.cache.map((guild) => guild.id);
 
         if (guildIds.length === 0) {
@@ -58,26 +56,12 @@ async function updateCommands(client) {
             Routes.applicationCommands(process.env.CLIENT_ID)
         );
 
-        console.log(
-            '[GLOBAL COMMANDS]',
-            globalCommands.map((cmd) => cmd.name)
-        );
         for (const guildId of guildIds) {
-            const existingGuildCommands = await rest.get(
-                Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId)
-            );
-
-            console.log(
-                `[GUILD COMMANDS ${guildId}]`,
-                existingGuildCommands.map((cmd) => cmd.name)
-            );
             try {
                 await rest.put(
                     Routes.applicationCommands(process.env.CLIENT_ID),
                     { body: [] }
                 );
-
-                console.log('Removed global application commands.');
             } catch (error) {
                 console.error('Failed to remove global commands:', error);
             }
@@ -85,11 +69,7 @@ async function updateCommands(client) {
                 Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
                 { body: commands }
             );
-            console.log(`Successfully reloaded commands for guild: ${guildId}`);
         }
-        console.log(
-            'Successfully reloaded application (/) commands for all guilds.'
-        );
     } catch (error) {
         console.error(
             'There was an error while refreshing application commands:',

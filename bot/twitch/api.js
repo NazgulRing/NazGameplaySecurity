@@ -26,8 +26,6 @@ async function getAccessToken() {
 
     tokenExpires = Date.now() + response.data.expires_in * 1000;
 
-    console.log('[TWITCH] New access token generated');
-
     return accessToken;
 }
 

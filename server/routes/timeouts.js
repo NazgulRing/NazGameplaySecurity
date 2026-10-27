@@ -142,15 +142,8 @@ function createTimeoutsRouter(client) {
                     error: 'The bot needs the Moderate Members permission.',
                 });
             }
-            console.log('[Timeout remove] Fetching member:', memberId);
 
             const member = await guild.members.fetch(memberId);
-
-            console.log(
-                '[Timeout remove] Successfully fetched:',
-                member.user.username,
-                member.id
-            );
 
             if (!member.moderatable) {
                 return res.status(403).json({
@@ -206,12 +199,9 @@ function createTimeoutsRouter(client) {
     });
 
     router.get('/timeouts/members/:guildID', async (req, res) => {
-        const startedAt = Date.now();
         const { guildID } = req.params;
 
         try {
-            console.log('[Timeout members] Request received:', guildID);
-
             if (!client.isReady()) {
                 return res.status(503).json({
                     error: 'Discord client is not ready.',
@@ -232,28 +222,8 @@ function createTimeoutsRouter(client) {
                 });
             }
 
-            console.log('[Timeout members] Fetching members...');
-
             let fetchedMembers = guild.members.cache;
 
-            // Hent fra Discord bare dersom cache ikke inneholder alle medlemmene.
-            console.log(
-                '[Timeout members] Mouth found:',
-                fetchedMembers.some(
-                    (member) =>
-                        member.user.username.toLowerCase() === 'mouth' ||
-                        member.displayName.toLowerCase() === 'mouth'
-                )
-            );
-
-            console.log(
-                '[Timeout members] Cached members:',
-                fetchedMembers.map((member) => ({
-                    username: member.user.username,
-                    displayName: member.displayName,
-                    isBot: member.user.bot,
-                }))
-            );
             if (fetchedMembers.size < guild.memberCount) {
                 try {
                     fetchedMembers = await guild.members.fetch({
@@ -269,11 +239,6 @@ function createTimeoutsRouter(client) {
                     fetchedMembers = guild.members.cache;
                 }
             }
-
-            console.log(
-                `[Timeout members] Using ${fetchedMembers.size} cached/fetched members; ` +
-                    `server count: ${guild.memberCount}`
-            );
 
             const members = fetchedMembers
                 .filter((member) => !member.user.bot)
@@ -291,14 +256,6 @@ function createTimeoutsRouter(client) {
                         null,
                 }))
                 .sort((a, b) => a.displayName.localeCompare(b.displayName));
-
-            console.log(
-                `[Timeout members] Returned ${members.length} members in ${Date.now() - startedAt} ms`
-            );
-            console.log(
-                '[Timeout members] Mouth in response:',
-                members.some((member) => member.displayName === 'Mouth')
-            );
 
             return res.json(members);
         } catch (error) {
