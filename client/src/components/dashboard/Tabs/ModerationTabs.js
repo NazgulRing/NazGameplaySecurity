@@ -2,11 +2,11 @@ import React from 'react';
 
 function ModerationTabs({ activeTab, setActiveTab }) {
     return (
-        <div className="dashboard-tabs">
+        <div className="dashboard-tabs dashboard-subtabs">
             <button
                 className={
                     activeTab === 'Logs'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Logs')}>
@@ -16,7 +16,7 @@ function ModerationTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'AutoMod'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('AutoMod')}>
@@ -26,7 +26,7 @@ function ModerationTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Control Panel Logs'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Control Panel Logs')}>
@@ -36,7 +36,7 @@ function ModerationTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Mod Actions'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Mod Actions')}>

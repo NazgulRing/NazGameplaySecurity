@@ -1,0 +1,270 @@
+/* Control Panel Logs Panel */
+
+.control-panel-logs-panel {
+    margin: 24px 0 0 0px;
+    width: 100%;
+    min-width: 0;
+}
+
+.control-panel-logs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.control-panel-logs-header h3 {
+    margin: 0;
+    color: var(--text-primary, #f2f3f5);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.control-panel-logs-header p {
+    margin: 6px 0 0;
+    color: var(--text-secondary, #b5bac1);
+    font-size: 0.9rem;
+}
+
+.control-panel-logs-refresh {
+    flex-shrink: 0;
+    padding: 9px 15px;
+    border: 1px solid var(--border-color, #3f4147);
+    border-radius: 8px;
+    background: var(--card-background, #2b2d31);
+    color: var(--text-primary, #f2f3f5);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.control-panel-logs-refresh:hover:not(:disabled) {
+    background: var(--hover-background, #383a40);
+    border-color: var(--accent-color, #5865f2);
+}
+
+.control-panel-logs-refresh:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Log list */
+
+.control-panel-logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.control-panel-log-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border-color, #3f4147);
+    border-radius: 10px;
+    background: var(--card-background, #2b2d31);
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.control-panel-log-card:hover {
+    border-color: var(--accent-color, #5865f2);
+}
+
+/* Action and status */
+
+.control-panel-log-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.control-panel-log-action {
+    min-width: 0;
+    color: var(--text-primary, #f2f3f5);
+    font-size: 0.98rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.control-panel-log-status {
+    flex-shrink: 0;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.control-panel-log-status.status-success {
+    background: rgba(35, 165, 89, 0.15);
+    color: #57d98b;
+}
+
+.control-panel-log-status.status-error {
+    background: rgba(242, 63, 67, 0.15);
+    color: #ff777a;
+}
+
+/* User and category information */
+
+.control-panel-log-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 11px;
+    color: var(--text-secondary, #b5bac1);
+    font-size: 0.82rem;
+}
+
+.control-panel-log-user-id {
+    overflow-wrap: anywhere;
+    font-family: monospace;
+    font-size: 0.78rem;
+    opacity: 0.8;
+}
+
+.control-panel-log-category {
+    padding: 3px 7px;
+    border: 1px solid var(--border-color, #3f4147);
+    border-radius: 5px;
+    color: var(--text-secondary, #b5bac1);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+/* Details and timestamp */
+
+.control-panel-log-details {
+    margin: 12px 0 0;
+    color: var(--text-secondary, #b5bac1);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.control-panel-log-time {
+    display: block;
+    margin-top: 12px;
+    color: var(--text-muted, #8e9297);
+    font-size: 0.78rem;
+}
+
+/* Empty, loading and error states */
+
+.control-panel-logs-empty {
+    margin: 0;
+    padding: 28px 16px;
+    border: 1px dashed var(--border-color, #3f4147);
+    border-radius: 10px;
+    color: var(--text-secondary, #b5bac1);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.control-panel-logs-error {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(242, 63, 67, 0.35);
+    border-radius: 8px;
+    background: rgba(242, 63, 67, 0.1);
+    color: #ff777a;
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+}
+
+/* Responsive layout */
+
+@media (max-width: 600px) {
+    .control-panel-logs-header {
+        align-items: flex-start;
+    }
+
+    .control-panel-log-card {
+        padding: 13px;
+    }
+
+    .control-panel-log-top {
+        gap: 8px;
+    }
+
+    .control-panel-log-action {
+        font-size: 0.9rem;
+    }
+
+    .control-panel-log-meta {
+        gap: 8px;
+    }
+
+    .control-panel-log-user-id {
+        width: 100%;
+    }
+}
+.control-panel-logs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.control-panel-logs-delete {
+    padding: 9px 15px;
+    border: 1px solid rgba(242, 63, 67, 0.5);
+    border-radius: 8px;
+    background: rgba(242, 63, 67, 0.12);
+    color: #ff777a;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.control-panel-logs-delete:hover:not(:disabled) {
+    background: rgba(242, 63, 67, 0.22);
+}
+
+.control-panel-logs-delete:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.control-panel-logs-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.control-panel-logs-search,
+.control-panel-logs-category-filter {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border-color, #3f4147);
+    border-radius: 8px;
+    background: var(--card-background, #2b2d31);
+    color: var(--text-primary, #f2f3f5);
+    font: inherit;
+}
+
+.control-panel-logs-search:focus,
+.control-panel-logs-category-filter:focus {
+    outline: 2px solid var(--accent-color, #5865f2);
+    outline-offset: 1px;
+}
+
+@media (max-width: 600px) {
+    .control-panel-logs-filters {
+        grid-template-columns: 1fr;
+    }
+}

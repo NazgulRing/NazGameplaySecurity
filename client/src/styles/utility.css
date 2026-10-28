@@ -1,5 +1,21 @@
+/* ================================
+   Layout
+================================ */
+
 .flex {
     display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-1 {
+    flex: 1;
 }
 
 .grid {
@@ -8,6 +24,18 @@
 
 .hidden {
     display: none;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
 }
 
 .items-center {
@@ -22,41 +50,38 @@
     justify-content: space-between;
 }
 
-.flex-col {
-    flex-direction: column;
-}
-
-.w-full {
-    width: 100%;
-}
-
-.h-full {
-    height: 100%;
-}
-
 .text-center {
     text-align: center;
 }
 
-.rounded {
-    border-radius: 16px;
+/* ================================
+   Spacing
+================================ */
+
+.gap-1 {
+    gap: var(--s1, 4px);
 }
 
-.shadow {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+.gap-2 {
+    gap: var(--s2, 8px);
 }
 
-.section {
-    width: 100%;
-    max-width: 1500px;
-
-    margin: 60px auto;
-
-    padding: 0 24px 120px 24px;
+.gap-3 {
+    gap: var(--s3, 12px);
 }
+
+.gap-4 {
+    gap: var(--s4, 16px);
+}
+
+.gap-6 {
+    gap: var(--s5, 24px);
+}
+
 .mb-2 {
     margin-bottom: 10px;
 }
+
 .mt-2 {
     margin-top: 2rem;
 }
@@ -68,12 +93,96 @@
 .p-2 {
     padding: 2px;
 }
+
 .py-2 {
     padding-top: 4px;
 }
+
+/* ================================
+   Sections
+================================ */
+
+.section {
+    width: 100%;
+    max-width: 1500px;
+    margin: 60px auto;
+    padding: 0 24px 120px;
+}
+
+/* ================================
+   Borders and Effects
+================================ */
+
+.rounded {
+    border-radius: var(--radius-lg, 16px);
+}
+
+.shadow {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ================================
+   Colors
+================================ */
+
 .color-primary {
     color: var(--primary-color);
 }
+
 .color-dark {
     color: var(--dark-color);
+}
+
+/* ================================
+   Dashboard Surfaces
+================================ */
+
+.surface-dark {
+    background: var(--dashboard-background);
+    color: var(--dashboard-text);
+    border: 1px solid var(--dashboard-border);
+    border-radius: var(--dashboard-radius);
+}
+
+.surface-dark-card {
+    background: var(--dashboard-surface);
+    color: var(--dashboard-text);
+    border: 1px solid var(--dashboard-border-card);
+    border-radius: var(--dashboard-radius-card);
+}
+
+/* ================================
+   Dashboard Text
+================================ */
+
+.text-primary {
+    color: var(--dashboard-text);
+}
+
+.text-muted {
+    color: var(--dashboard-text-muted);
+}
+
+.text-accent {
+    color: var(--dashboard-accent);
+}
+
+/* ================================
+   Accessibility
+================================ */
+
+.focus-ring:focus-visible {
+    outline: 2px solid var(--dashboard-accent);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../../styles/variables.css';
 import '../../styles/utility.css';
 import '../../styles/guildsbuttons.css';
+import '../../styles/dashboard.css';
 
 import TwitchPanel from '../twitch/TwitchPanels.js';
 import WelcomePanel from '../welcome/WelcomePanel.js';
@@ -12,12 +13,19 @@ import MembersPanel from './Panels/MembersPanel.js';
 import LogsPanel from './Panels/LogsPanel.js';
 import BanListPanel from './Panels/BanListPanel.js';
 import TimeoutPanel from './Panels/TimeoutPanel.js';
+import OverViewPanel from './Panels/OverviewPanel.js';
+import RolesPanel from './Panels/RolesPanel.js';
+import ServerInfoPanel from './Panels/ServerInfoPanel.js';
+import AutoModPanel from './Panels/AutoMods.js';
+import ControlPanelLogsPanel from './Panels/ControlPanelLogsPanel.js';
+import ModActionsPanel from './Panels/ModActionsPanel.js';
 
 import DashboardTabs from './Tabs/DashboardTabs.js';
 import GeneralTabs from './Tabs/GeneralTabs.js';
 import SecurityTabs from './Tabs/SecurityTabs.js';
 import ModerationTabs from './Tabs/ModerationTabs.js';
 import NotificationTabs from './Tabs/NotificationTabs.js';
+
 const settingFields = [
     {
         key: 'autoroleID',
@@ -63,13 +71,24 @@ const settingFields = [
     },
 ];
 
+const isLocalhost =
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1';
+
 const API_BASE_URL =
     process.env.REACT_APP_API_URL ||
-    `${window.location.protocol}//${window.location.hostname}:3001`;
+    (isLocalhost
+        ? `${window.location.protocol}//${window.location.hostname}:3001`
+        : window.location.origin);
 
-async function requestJSON(url, options) {
+async function requestJSON(url, options = {}) {
     const apiURL = url.startsWith('/api') ? `${API_BASE_URL}${url}` : url;
-    const response = await fetch(apiURL, options);
+
+    const response = await fetch(apiURL, {
+        ...options,
+        credentials: 'include',
+    });
+
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -89,6 +108,106 @@ function GuildsButton() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [editingStreamer, setEditingStreamer] = useState(null);
+
+    const [controlPanelLogs, setControlPanelLogs] = useState([]);
+    const [controlPanelLogsLoading, setControlPanelLogsLoading] =
+        useState(false);
+    const [controlPanelLogsError, setControlPanelLogsError] = useState('');
+
+    const fetchControlPanelLogs = useCallback(async () => {
+        if (!selectedGuildID) {
+            setControlPanelLogs([]);
+            return;
+        }
+
+        setControlPanelLogsLoading(true);
+        setControlPanelLogsError('');
+
+        try {
+            const apiURL = `/api/control-panel-logs/${selectedGuildID}`;
+
+            const response = await fetch(apiURL, {
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Could not load Control Panel Logs.');
+            }
+
+            const data = await response.json();
+
+            setControlPanelLogs(data.logs || []);
+        } catch (error) {
+            console.error('Error fetching Control Panel Logs:', error);
+            setControlPanelLogsError(error.message);
+        } finally {
+            setControlPanelLogsLoading(false);
+        }
+    }, [selectedGuildID]);
+
+    const deleteControlPanelLogs = useCallback(async (guildID) => {
+        if (!guildID) return;
+
+        setControlPanelLogsLoading(true);
+        setControlPanelLogsError('');
+
+        try {
+            const response = await fetch(`/api/control-panel-logs/${guildID}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message || 'Could not delete Control Panel Logs.'
+                );
+            }
+
+            setControlPanelLogs([]);
+        } catch (error) {
+            console.error('Error deleting Control Panel Logs:', error);
+            setControlPanelLogsError(error.message);
+        } finally {
+            setControlPanelLogsLoading(false);
+        }
+    }, []);
+
+    const toggleRoleMembers = async (roleID) => {
+        if (expandedRoleID === roleID) {
+            setExpandedRoleID(null);
+            return;
+        }
+
+        setExpandedRoleID(roleID);
+
+        // Bruk tidligere hentede data hvis de finnes.
+        if (roleMembers[roleID]) return;
+
+        setRoleMembersLoading((current) => ({
+            ...current,
+            [roleID]: true,
+        }));
+
+        try {
+            const data = await requestJSON(
+                `/api/roles/${selectedGuildID}/${roleID}/members`
+            );
+
+            setRoleMembers((current) => ({
+                ...current,
+                [roleID]: data.members || [],
+            }));
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setRoleMembersLoading((current) => ({
+                ...current,
+                [roleID]: false,
+            }));
+        }
+    };
 
     const [logSettings, setLogSettings] = useState({
         memberJoined: { enabled: false, channelID: '' },
@@ -129,6 +248,9 @@ function GuildsButton() {
     const [timeoutHistoryLoading, setTimeoutHistoryLoading] = useState(false);
     const [roles, setRoles] = useState([]);
     const [channels, setChannels] = useState([]);
+    const [roleMembers, setRoleMembers] = useState({});
+    const [expandedRoleID, setExpandedRoleID] = useState(null);
+    const [roleMembersLoading, setRoleMembersLoading] = useState({});
 
     const [settings, setSettings] = useState({
         autoroleID: '',
@@ -898,13 +1020,15 @@ function GuildsButton() {
                                     />
 
                                     {activeGeneralTab === 'Overview' && (
-                                        <div className="panel">
-                                            <h3>Overview</h3>
-                                            <p>
-                                                Server overview will be
-                                                displayed here.
-                                            </p>
-                                        </div>
+                                        <OverViewPanel
+                                            ChatMessages={0}
+                                            MemberCount={
+                                                selectedGuild.memberCount ??
+                                                members.length
+                                            }
+                                            Joins={0}
+                                            Leaves={0}
+                                        />
                                     )}
 
                                     {activeGeneralTab === 'Commands' && (
@@ -921,23 +1045,26 @@ function GuildsButton() {
                                     )}
 
                                     {activeGeneralTab === 'Roles' && (
-                                        <div className="panel">
-                                            <h3>Roles</h3>
-                                            <p>
-                                                Role information will be
-                                                displayed here.
-                                            </p>
-                                        </div>
+                                        <RolesPanel
+                                            roles={roles}
+                                            totalMembers={
+                                                selectedGuild?.memberCount ?? 0
+                                            }
+                                            expandedRoleID={expandedRoleID}
+                                            roleMembers={roleMembers}
+                                            roleMembersLoading={
+                                                roleMembersLoading
+                                            }
+                                            onToggleRole={toggleRoleMembers}
+                                        />
                                     )}
 
                                     {activeGeneralTab === 'Server Info' && (
-                                        <div className="panel">
-                                            <h3>Server Info</h3>
-                                            <p>
-                                                Server information will be
-                                                displayed here.
-                                            </p>
-                                        </div>
+                                        <ServerInfoPanel
+                                            guild={selectedGuild}
+                                            roles={roles}
+                                            members={members}
+                                        />
                                     )}
                                 </>
                             )}
@@ -1022,6 +1149,31 @@ function GuildsButton() {
                                         activeTab={activeModerationTab}
                                         setActiveTab={setActiveModerationTab}
                                     />
+                                    {activeModerationTab === 'AutoMod' && (
+                                        <AutoModPanel
+                                            channels={channels}
+                                            roles={roles}
+                                            selectedGuildID={selectedGuildID}
+                                        />
+                                    )}
+                                    {activeModerationTab ===
+                                        'Control Panel Logs' && (
+                                        <ControlPanelLogsPanel
+                                            logs={controlPanelLogs}
+                                            loading={controlPanelLogsLoading}
+                                            error={controlPanelLogsError}
+                                            onRefresh={fetchControlPanelLogs}
+                                            guildID={selectedGuildID}
+                                            onDeleteLogs={
+                                                deleteControlPanelLogs
+                                            }
+                                        />
+                                    )}
+                                    {activeModerationTab === 'Mod Actions' && (
+                                        <ModActionsPanel
+                                            guildID={selectedGuildID}
+                                        />
+                                    )}
 
                                     {activeModerationTab === 'Logs' && (
                                         <LogsPanel

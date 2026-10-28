@@ -2,11 +2,11 @@ import React from 'react';
 
 function SecurityTabs({ activeTab, setActiveTab }) {
     return (
-        <div className="dashboard-tabs">
+        <div className="dashboard-tabs dashboard-subtabs">
             <button
                 className={
                     activeTab === 'Warnings'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Warnings')}>
@@ -16,7 +16,7 @@ function SecurityTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Ban List'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Ban List')}>
@@ -26,7 +26,7 @@ function SecurityTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'User Timeouts'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('User Timeouts')}>
@@ -36,7 +36,7 @@ function SecurityTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Welcome Messages'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Welcome Messages')}>
@@ -46,7 +46,7 @@ function SecurityTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Auto Roles'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Auto Roles')}>

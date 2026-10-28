@@ -1,0 +1,222 @@
+/* ================================
+   Roles Panel
+================================ */
+
+.roles-panel {
+    margin: 24px 0 0 0px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Header */
+.roles-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.roles-header h3 {
+    margin: 0;
+    color: var(--dashboard-text-strong, #f8fafc);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.roles-header p {
+    margin: 6px 0 0;
+    color: var(--dashboard-text-muted, #aab3c0);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Roles list */
+.roles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Role card */
+.role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--dashboard-surface, #191c23);
+    border: 1px solid var(--dashboard-border-card, #343944);
+    border-radius: var(--dashboard-radius, 12px);
+    transition:
+        background var(--dashboard-transition, 0.2s ease),
+        border-color var(--dashboard-transition, 0.2s ease);
+}
+
+.role-card:hover {
+    border-color: var(--dashboard-border-hover, #383e49);
+}
+
+/* Clickable role header */
+.role-card-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 16px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.role-card-button:hover {
+    background: var(--dashboard-surface-raised, #20232b);
+}
+
+.role-card-button:focus-visible {
+    outline: 2px solid #5865f2;
+    outline-offset: -3px;
+}
+
+.role-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.role-color {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.role-name {
+    min-width: 0;
+    color: var(--dashboard-text-strong, #f8fafc);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.role-card-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.role-member-count {
+    color: var(--dashboard-text-muted, #aab3c0);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.role-chevron {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.role-chevron.expanded {
+    transform: rotate(180deg);
+}
+
+/* Members displayed BELOW the role header */
+.role-members {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 14px 24px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 16px;
+    border-top: 1px solid var(--dashboard-border-card, #343944);
+}
+
+/* Individual member */
+.role-member {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.role-member-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.role-member-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.role-member-name {
+    color: var(--dashboard-text-strong, #f8fafc);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.role-member-username {
+    color: var(--dashboard-text-muted, #aab3c0);
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+}
+
+/* Empty state and loading text */
+.roles-empty {
+    padding: 20px 0;
+    margin: 0;
+    color: var(--dashboard-text-muted, #aab3c0);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .role-members {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .roles-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .role-card-button {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .role-member-count {
+        font-size: 12px;
+    }
+
+    .role-members {
+        padding: 12px;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .role-card,
+    .role-chevron {
+        transition: none;
+    }
+}

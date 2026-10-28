@@ -9,6 +9,7 @@ function App() {
             <header>
                 <Navmenu />
             </header>
+
             <main>
                 <InnerContent className="ct-section">
                     <div>
@@ -16,6 +17,7 @@ function App() {
                     </div>
                 </InnerContent>
             </main>
+
             <Footer />
         </div>
     );

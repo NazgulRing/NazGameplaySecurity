@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../../styles/warning.css';
 
 function WarningsPanel({ warnings, selectedGuildID, selectGuild }) {
     const [notice, setNotice] = useState(null);

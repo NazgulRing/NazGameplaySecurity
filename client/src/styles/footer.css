@@ -1,26 +1,34 @@
+/* ================================
+   Footer
+================================ */
+
 .footer {
     margin-top: 140px;
-    background: linear-gradient(180deg, #101114, #08090c);
     padding: 70px 40px;
-    color: white;
+    background: linear-gradient(
+        180deg,
+        var(--footer-background-start, #101114),
+        var(--footer-background-end, #08090c)
+    );
+    color: var(--dashboard-text-strong);
 }
 
 .footer-container {
-    max-width: 1400px;
-    margin: 0 auto;
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr;
     gap: 50px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .footer-left h4 {
-    font-size: 34px;
     margin-bottom: 20px;
+    font-size: 34px;
 }
 
 .footer-left p {
+    color: var(--footer-text, #d1d5db);
     line-height: 1.8;
-    color: #d1d5db;
 }
 
 .footer-right {
@@ -30,29 +38,31 @@
 }
 
 .footer-right h5 {
-    font-size: 20px;
     margin-bottom: 12px;
+    font-size: 20px;
 }
 
 .footer-right a {
-    color: #d1d5db;
+    color: var(--footer-text, #d1d5db);
     text-decoration: none;
+    transition: color var(--dashboard-transition, 0.2s ease);
 }
 
 .footer-right a:hover {
-    color: #7c4dff;
+    color: var(--dashboard-accent);
 }
 
 .footer-logo img {
+    display: block;
     width: 400px;
     height: auto;
     object-fit: contain;
-    display: block;
     background: transparent;
     border: none;
     box-shadow: none;
 }
 
+/* Responsive layout */
 @media (max-width: 900px) {
     .footer-container {
         grid-template-columns: 1fr;

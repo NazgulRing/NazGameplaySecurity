@@ -216,7 +216,7 @@ function TimeoutPanel({
 
         try {
             const response = await fetch(
-                `http://localhost:3001/api/timeouts/history/${selectedGuildID}`,
+                `/api/timeouts/history/${selectedGuildID}`,
                 { method: 'DELETE' }
             );
 

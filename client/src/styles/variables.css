@@ -348,4 +348,69 @@
         ),
         calc(var(--desktop-9xl) * 1rem)
     );
+
+    /* Dashboard theme — backgrounds */
+    /* Main backgrounds */
+    --dashboard-background: #17191f;
+    --dashboard-surface: #191c23;
+    --dashboard-surface-raised: #20232b;
+    --dashboard-surface-hover: #292d36;
+    --dashboard-category-background: #252934;
+    --dashboard-channel-background: #242832;
+    --dashboard-icon-background: #232428;
+
+    /* Text */
+    --dashboard-text: #f1f3f5;
+    --dashboard-text-strong: #f8fafc;
+    --dashboard-text-muted: #aab3c0;
+    --dashboard-text-secondary: #9ca6b5;
+    --dashboard-text-tertiary: #8e9aaa;
+    --dashboard-text-description: #b6c0cf;
+    --dashboard-text-section: #b5bac1;
+    --dashboard-text-subtle: #949ba4;
+    --dashboard-text-body: #c0c6d0;
+
+    /* Borders */
+    --dashboard-border: #30343d;
+    --dashboard-border-card: #343944;
+    --dashboard-border-hover: #383e49;
+    --dashboard-border-strong: #3b414d;
+    --dashboard-border-channel: #353b47;
+    --dashboard-border-button: #4a5363;
+    --dashboard-border-subtle: rgba(255, 255, 255, 0.05);
+    --dashboard-border-divider: rgba(255, 255, 255, 0.08);
+    --dashboard-border-hover-subtle: rgba(255, 255, 255, 0.12);
+
+    /* Accent */
+    --dashboard-accent: #6c50ff;
+    --dashboard-accent-hover: #6045e8;
+    --dashboard-focus: #8ab4ff;
+
+    /* Shape */
+    --dashboard-radius: 12px;
+    --dashboard-radius-card: 8px;
+    --dashboard-radius-small: 6px;
+    --dashboard-radius-channel: 7px;
+
+    /* Effects */
+    --dashboard-shadow: none;
+    --dashboard-transition: 0.2s ease;
+
+    /* Footer */
+    --footer-background-start: #101114;
+    --footer-background-end: #08090c;
+    --footer-text: #d1d5db;
+
+    --status-error: #ee0202;
+    --status-success: #07dd00;
+
+    /* Navigation */
+    --nav-background: rgba(10, 15, 11, 0.82);
+    --nav-border: rgba(255, 255, 255, 0.08);
+
+    /* General buttons */
+    --primary: #6c55b8;
+    --primary-hover: #8069d1;
+    --text-heading: #ffffff;
+    --transition-default: 0.2s ease;
 }

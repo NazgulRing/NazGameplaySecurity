@@ -2,11 +2,11 @@ import React from 'react';
 
 function NotificationTabs({ activeTab, setActiveTab }) {
     return (
-        <div className="dashboard-tabs">
+        <div className="dashboard-tabs dashboard-subtabs">
             <button
                 className={
                     activeTab === 'Twitch'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Twitch')}>
@@ -16,7 +16,7 @@ function NotificationTabs({ activeTab, setActiveTab }) {
             <button
                 className={
                     activeTab === 'Youtube'
-                        ? 'dashboard-tab dashboard-tab-active'
+                        ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
                         : 'dashboard-tab'
                 }
                 onClick={() => setActiveTab('Youtube')}>

@@ -1,0 +1,276 @@
+/* Main panel */
+.mod-actions-panel {
+    margin: 24px 0 0 0px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 22px;
+    border: 1px solid #303642;
+    border-radius: 12px;
+    background: #191c22;
+    color: #f3f4f6;
+    font-family: inherit;
+}
+
+.mod-actions-panel * {
+    box-sizing: border-box;
+}
+
+/* Header */
+.mod-actions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.mod-actions-header h2 {
+    margin: 0 0 5px;
+    color: #f9fafb;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.mod-actions-header p {
+    margin: 0;
+    color: #a8b6ca;
+    font-size: 13px;
+}
+
+.mod-actions-count {
+    padding: 7px 11px;
+    border: 1px solid #303642;
+    border-radius: 999px;
+    background: #20242c;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Search */
+.mod-actions-search {
+    margin-bottom: 24px;
+}
+
+.mod-actions-search input {
+    width: 100%;
+    min-height: 42px;
+    padding: 11px 14px;
+    border: 1px solid #343943;
+    border-radius: 8px;
+    outline: none;
+    background: #191c22;
+    color: #f3f4f6;
+    font: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+}
+
+.mod-actions-search input::placeholder {
+    color: #8993a3;
+}
+
+.mod-actions-search input:focus {
+    border-color: #667085;
+}
+
+/* Categories */
+.mod-actions-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.mod-actions-category {
+    min-width: 0;
+}
+
+.mod-actions-category-header {
+    margin-bottom: 14px;
+}
+
+.mod-actions-category-header h3 {
+    margin: 0 0 5px;
+    color: #f3f4f6;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.mod-actions-category-header p {
+    margin: 0;
+    color: #a8b6ca;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Command list */
+.mod-actions-command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+    border: none;
+    background: transparent;
+}
+
+/* Individual command cards */
+.mod-actions-command {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 68px;
+    padding: 13px 17px;
+    border: 1px solid #303642;
+    border-radius: 10px;
+    background: #191c22;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.mod-actions-command:hover {
+    border-color: #454c59;
+    background: #1d2129;
+}
+
+.mod-actions-command-info {
+    min-width: 0;
+}
+
+.mod-actions-command-name {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: #f9fafb;
+    font-size: 13px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.mod-actions-command-info p {
+    margin: 0;
+    color: #a8b6ca;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Toggle switches */
+.mod-actions-toggle {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: flex-start;
+    width: 42px;
+    height: 24px;
+    padding: 3px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.mod-actions-toggle.is-enabled {
+    justify-content: flex-end;
+    background: #23864b;
+    border-color: #32965a;
+}
+
+.mod-actions-toggle.is-disabled {
+    justify-content: flex-start;
+    background: #292e38;
+    border-color: #454c59;
+}
+
+.mod-actions-toggle-knob {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+    transition: transform 0.2s ease;
+}
+
+.mod-actions-toggle:hover:not(:disabled) {
+    filter: brightness(1.12);
+}
+
+.mod-actions-toggle:focus-visible {
+    outline: 2px solid #86efac;
+    outline-offset: 3px;
+}
+
+.mod-actions-toggle:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+
+/* Loading and status messages */
+.mod-actions-message,
+.mod-actions-status {
+    padding: 13px 15px;
+    border: 1px solid #303642;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.mod-actions-status {
+    background: #191c22;
+    color: #a8b6ca;
+}
+
+.mod-actions-message {
+    margin-bottom: 16px;
+}
+
+.mod-actions-error {
+    border-color: #713b42;
+    background: #2b1c21;
+    color: #fca5a5;
+}
+
+.mod-actions-success {
+    border-color: #285d3b;
+    background: #192a21;
+    color: #86efac;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+    .mod-actions-panel {
+        padding: 16px 12px;
+        border-radius: 10px;
+    }
+
+    .mod-actions-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .mod-actions-header h2 {
+        font-size: 22px;
+    }
+
+    .mod-actions-categories {
+        gap: 22px;
+    }
+
+    .mod-actions-command {
+        min-height: 57px;
+        gap: 10px;
+        padding: 10px 12px;
+    }
+
+    .mod-actions-command-info p {
+        font-size: 11px;
+    }
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../../styles/commands.css';
 function CommandsPanel({ commands }) {
     return (
         <div className="panel commands-panel">
@@ -7,8 +8,8 @@ function CommandsPanel({ commands }) {
             <ul className="command-list">
                 {commands.map((command) => (
                     <li key={command.name}>
-                        <strong>/{command.name}</strong>
-
+                        <strong>/{command.name}:</strong>
+                        <br />
                         <span>{command.description}</span>
                     </li>
                 ))}

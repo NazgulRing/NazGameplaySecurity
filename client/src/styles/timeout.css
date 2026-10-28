@@ -1,3 +1,13 @@
+/* ================================
+   Timeout Panel
+================================ */
+
+.timeout-panel {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Tabs */
 .timeout-panel .timeout-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -6,9 +16,11 @@
 }
 
 .timeout-panel .timeout-tab-active {
-    outline: 2px solid var(--primary-color, currentColor);
+    outline: 2px solid var(--dashboard-accent, #6c50ff);
+    outline-offset: 2px;
 }
 
+/* Form Layout */
 .timeout-panel .timeout-form {
     display: flex;
     flex-direction: column;
@@ -22,21 +34,9 @@
     gap: 8px;
 }
 
-.timeout-panel .timeout-form-group select,
-.timeout-panel .timeout-form-group textarea,
-.timeout-panel .timeout-duration-inputs input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color, #444);
-    border-radius: 6px;
-    background: var(--input-background, #171717);
-    color: inherit;
-    font: inherit;
-}
-
 .timeout-panel .timeout-radio-row {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
@@ -56,6 +56,59 @@
     min-width: 0;
 }
 
+/* Form Fields */
+.timeout-panel select,
+.timeout-panel input:not([type='radio']),
+.timeout-panel textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid var(--dashboard-border-strong, #3b414d);
+    border-radius: var(--dashboard-radius-small, 6px);
+    background: var(--dashboard-surface, #191c23);
+    color: var(--dashboard-text, #f1f3f5);
+    font: inherit;
+    transition:
+        border-color var(--dashboard-transition, 0.2s ease),
+        box-shadow var(--dashboard-transition, 0.2s ease);
+}
+
+.timeout-panel select option {
+    background: var(--dashboard-surface, #191c23);
+    color: var(--dashboard-text, #f1f3f5);
+}
+
+.timeout-panel select:focus-visible,
+.timeout-panel input:focus-visible,
+.timeout-panel textarea:focus-visible {
+    outline: 2px solid var(--dashboard-focus, #8ab4ff);
+    outline-offset: 2px;
+    border-color: var(--dashboard-accent, #6c50ff);
+}
+
+.timeout-panel textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.timeout-panel input::placeholder,
+.timeout-panel textarea::placeholder {
+    color: var(--dashboard-text-tertiary, #8e9aaa);
+    opacity: 1;
+}
+
+/* Radio Buttons */
+.timeout-panel input[type='radio'] {
+    width: auto;
+    accent-color: var(--dashboard-accent, #6c50ff);
+}
+
+/* Submit Button */
+.timeout-panel button[type='submit'] {
+    cursor: pointer;
+}
+
+/* Member Avatar Fallback */
 .timeout-panel .timeout-avatar-fallback {
     display: flex;
     flex-shrink: 0;
@@ -64,122 +117,21 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--secondary-background, #333);
+    background: var(--dashboard-icon-background, #232428);
+    color: var(--dashboard-text-strong, #f8fafc);
     font-weight: 700;
 }
 
-/* Timeout form fields */
-.timeout-panel select,
-.timeout-panel input,
-.timeout-panel textarea,
-.timeout-form select,
-.timeout-form input,
-.timeout-form textarea {
-    width: 100%;
-    box-sizing: border-box;
-    background: #ffffff;
-    color: #1f2937;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 12px;
-    font: inherit;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-/* Dropdown options */
-.timeout-panel select option,
-.timeout-form select option {
-    background: #ffffff;
-    color: #1f2937;
-}
-
-/* Focus state */
-.timeout-panel select:focus,
-.timeout-panel input:focus,
-.timeout-panel textarea:focus,
-.timeout-form select:focus,
-.timeout-form input:focus,
-.timeout-form textarea:focus {
-    outline: none;
-    border-color: #7652ff;
-    box-shadow: 0 0 0 3px rgba(118, 82, 255, 0.15);
-}
-
-/* Reason field */
-.timeout-panel textarea,
-.timeout-form textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-/* Placeholder text */
-.timeout-panel input::placeholder,
-.timeout-panel textarea::placeholder,
-.timeout-form input::placeholder,
-.timeout-form textarea::placeholder {
-    color: #6b7280;
-    opacity: 1;
-}
-
-/* Duration radio buttons */
-.timeout-panel input[type='radio'],
-.timeout-form input[type='radio'] {
-    width: auto;
-    accent-color: #7652ff;
-}
-
-/* Keep the submit button styled independently */
-.timeout-panel button[type='submit'],
-.timeout-form button[type='submit'] {
-    cursor: pointer;
-}
-
-/* Force readable text in timeout dropdowns */
-.timeout-panel select,
-.timeout-form select {
-    background-color: #ffffff !important;
-    color: #1f2937 !important;
-    -webkit-text-fill-color: #1f2937 !important;
-    border: 1px solid #d1d5db;
-}
-
-/* Selected member and duration options */
-.timeout-panel select option,
-.timeout-form select option {
-    background-color: #ffffff !important;
-    color: #1f2937 !important;
-}
-
-/* Keep textarea readable */
-.timeout-panel textarea,
-.timeout-form textarea {
-    background-color: #ffffff !important;
-    color: #1f2937 !important;
-    -webkit-text-fill-color: #1f2937 !important;
-}
-
-/* Placeholder */
-.timeout-panel textarea::placeholder,
-.timeout-form textarea::placeholder {
-    color: #6b7280 !important;
-    -webkit-text-fill-color: #6b7280 !important;
-}
-.timeout-form select {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
+/* Member Search Results */
 .timeout-member-results {
     display: flex;
     flex-direction: column;
     max-height: 240px;
     overflow-y: auto;
     margin-top: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: #fff;
+    border: 1px solid var(--dashboard-border, #30343d);
+    border-radius: var(--dashboard-radius-card, 8px);
+    background: var(--dashboard-surface, #191c23);
 }
 
 .timeout-member-option {
@@ -190,51 +142,73 @@
     width: 100%;
     padding: 10px 12px;
     border: none;
-    border-bottom: 1px solid #eee;
-    background: #fff;
-    color: #1f2937;
+    border-bottom: 1px solid var(--dashboard-border, #30343d);
+    background: transparent;
+    color: var(--dashboard-text, #f1f3f5);
     text-align: left;
     cursor: pointer;
+    transition: background var(--dashboard-transition, 0.2s ease);
+}
+
+.timeout-member-option:last-child {
+    border-bottom: none;
 }
 
 .timeout-member-option:hover {
-    background: #f3f0ff;
+    background: var(--dashboard-surface-hover, #292d36);
 }
 
 .timeout-member-option.selected {
-    background: #ede9fe;
-    color: #5b35d5;
+    background: var(--dashboard-category-background, #252934);
+    color: var(--dashboard-text-strong, #f8fafc);
+    outline: 1px solid var(--dashboard-accent, #6c50ff);
+    outline-offset: -1px;
+}
+
+.timeout-member-option:focus-visible {
+    outline: 2px solid var(--dashboard-focus, #8ab4ff);
+    outline-offset: -2px;
 }
 
 .timeout-member-id {
-    color: #6b7280;
+    color: var(--dashboard-text-muted, #aab3c0);
     font-size: 12px;
 }
 
+/* Selected Member */
 .timeout-selected-member {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-top: 8px;
+    color: var(--dashboard-text, #f1f3f5);
     font-size: 14px;
 }
 
 .timeout-selected-member button {
+    padding: 4px;
     border: none;
     background: transparent;
-    color: #6d4aff;
+    color: var(--dashboard-accent, #6c50ff);
     cursor: pointer;
 }
 
+.timeout-selected-member button:focus-visible {
+    outline: 2px solid var(--dashboard-focus, #8ab4ff);
+    outline-offset: 2px;
+}
+
+/* Timeout History */
 .timeout-history-avatar {
+    flex-shrink: 0;
     width: 40px;
-    height: 40px;
     min-width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    flex-shrink: 0;
 }
+
 .timeout-history-header {
     display: flex;
     align-items: center;
@@ -251,8 +225,24 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* Responsive */
 @media (max-width: 600px) {
     .timeout-panel .timeout-duration-inputs {
         flex-direction: column;
+    }
+
+    .timeout-panel .timeout-radio-row {
+        gap: 12px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .timeout-panel select,
+    .timeout-panel input,
+    .timeout-panel textarea,
+    .timeout-member-option {
+        transition: none;
     }
 }

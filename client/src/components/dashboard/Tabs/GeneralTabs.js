@@ -1,57 +1,24 @@
 import React from 'react';
 
+const tabs = ['Overview', 'Commands', 'Members', 'Roles', 'Server Info'];
+
 function GeneralTabs({ activeTab, setActiveTab }) {
     return (
-        <div className="dashboard-tabs">
-            <button
-                className={
-                    activeTab === 'Overview'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('Overview')}>
-                Overview
-            </button>
-
-            <button
-                className={
-                    activeTab === 'Commands'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('Commands')}>
-                Commands
-            </button>
-
-            <button
-                className={
-                    activeTab === 'Members'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('Members')}>
-                Members
-            </button>
-
-            <button
-                className={
-                    activeTab === 'Roles'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('Roles')}>
-                Roles
-            </button>
-
-            <button
-                className={
-                    activeTab === 'Server Info'
-                        ? 'dashboard-tab dashboard-tab-active'
-                        : 'dashboard-tab'
-                }
-                onClick={() => setActiveTab('Server Info')}>
-                Server Info
-            </button>
+        <div className="dashboard-tabs dashboard-subtabs">
+            {tabs.map((tab) => (
+                <button
+                    key={tab}
+                    type="button"
+                    className={
+                        activeTab === tab
+                            ? 'dashboard-tab dashboard-subtab dashboard-tab-active'
+                            : 'dashboard-tab dashboard-subtab'
+                    }
+                    onClick={() => setActiveTab(tab)}
+                    aria-pressed={activeTab === tab}>
+                    {tab}
+                </button>
+            ))}
         </div>
     );
 }

@@ -1,17 +1,19 @@
+/* ================================
+   Navigation Menu
+================================ */
+
 .nav-menu {
     position: relative;
     z-index: 10;
-
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-
     width: 100%;
     box-sizing: border-box;
-    padding: 16px 4%;
-
-    background: rgba(10, 15, 11, 0.82);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px 3.5%;
+    background: var(--nav-background, rgba(10, 15, 11, 0.92));
+    border-bottom: 1px solid var(--nav-border, rgba(255, 255, 255, 0.08));
+    backdrop-filter: blur(14px);
 }
 
 .header-left,
@@ -20,44 +22,234 @@
     align-items: center;
 }
 
-.nav-logo {
-    display: block;
-    width: 100px;
-    height: auto;
-    object-fit: contain;
+.header-left {
+    justify-self: start;
 }
 
-.discord-button {
+.header-center {
+    justify-self: center;
+    text-align: center;
+}
+
+.header-center h1 {
+    margin: 0;
+    color: var(--text-primary, #e4b52e);
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    font-weight: 750;
+    letter-spacing: -0.025em;
+}
+
+.header-right {
+    justify-self: end;
+    gap: 12px;
+}
+
+/* Logo */
+
+.nav-logo {
+    display: block;
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+/* Shared button styling */
+
+.discord-button,
+.discord-auth button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    padding: 11px 20px;
-    border-radius: 8px;
-
-    background: #6c55b8;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 10px 17px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: var(--primary, #6c55b8);
     color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
     text-decoration: none;
-    font-weight: 600;
-
-    transition: background 0.2s ease;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.discord-button:hover {
-    background: #8069d1;
+.discord-button:hover,
+.discord-auth button:hover {
+    background: var(--primary-hover, #8069d1);
+    transform: translateY(-1px);
 }
 
-@media (max-width: 600px) {
+.discord-button:focus-visible,
+.discord-auth button:focus-visible {
+    outline: 2px solid var(--dashboard-focus, #8ab4ff);
+    outline-offset: 3px;
+}
+
+/* Discord authentication */
+
+.discord-auth {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-heading, #fff);
+    font-size: 14px;
+}
+
+.discord-auth img {
+    display: block;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.discord-auth span {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.discord-auth button {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.discord-auth button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
     .nav-menu {
-        padding: 14px 5%;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        padding: 12px 4%;
     }
 
     .nav-logo {
-        width: 100px;
+        width: 60px;
+        height: 60px;
     }
 
-    .discord-button {
-        padding: 9px 13px;
-        font-size: 14px;
+    .header-center {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: center;
     }
+
+    .header-left {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .header-right {
+        grid-column: 2;
+        grid-row: 1;
+        gap: 8px;
+    }
+
+    .discord-auth {
+        gap: 6px;
+        font-size: 12px;
+    }
+
+    .discord-auth img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .discord-auth span {
+        max-width: 90px;
+    }
+
+    .discord-button,
+    .discord-auth button {
+        min-height: 38px;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    .nav-menu {
+        padding: 10px 3%;
+    }
+
+    .nav-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .header-right {
+        gap: 6px;
+    }
+
+    .discord-auth {
+        gap: 5px;
+    }
+
+    .discord-auth span {
+        max-width: 72px;
+    }
+
+    .discord-button,
+    .discord-auth button {
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .discord-button,
+    .discord-auth button {
+        transition: none;
+    }
+
+    .discord-button:hover,
+    .discord-auth button:hover {
+        transform: none;
+    }
+}
+
+.discord-login-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 11px 20px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: #6c55b8 !important;
+    color: #fff !important;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: background 0.2s ease;
+}
+
+.discord-login-button:hover {
+    background: #8069d1 !important;
+}
+
+.discord-login-button:focus-visible {
+    outline: 2px solid #8ab4ff;
+    outline-offset: 3px;
 }

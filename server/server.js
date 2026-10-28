@@ -1,4 +1,8 @@
-const { ChannelType, EmbedBuilder } = require('discord.js');
+const {
+    ChannelType,
+    EmbedBuilder,
+    PermissionFlagsBits,
+} = require('discord.js');
 const express = require('express');
 const path = require('node:path');
 const cors = require('cors');
@@ -87,6 +91,13 @@ function keepAlive(client, app) {
     });
 
     /* 1️⃣  – Statiske React‑filer  */
+    const authRouter = require('./routes/auth');
+
+    console.log('[AUTH DEBUG] Registering auth router');
+    app.use('/auth', authRouter);
+    app.get('/auth-test', (req, res) => {
+        res.json({ success: true, message: 'Correct Express app' });
+    });
 
     app.use('/api', createSettingsRouter(client));
 
@@ -134,26 +145,68 @@ function keepAlive(client, app) {
 
     app.post('/event', async (req, res) => {
         try {
+            // Require Discord login.
+            if (!req.session?.user?.id) {
+                return res.status(401).json({
+                    error: 'You must log in with Discord.',
+                });
+            }
+
             const { guildID, title, description, date } = req.body;
+
             if (!guildID || !title || !description || !date) {
                 return res.status(400).json({
                     error: 'Missing required fields: guildID, title, description, date',
                 });
             }
 
-            const channelID = await db.get(`setEventChannel_${guildID}`);
-            if (!channelID) {
-                return res
-                    .status(400)
-                    .json({ error: 'Event channel not set for this guild.' });
+            const guild = client.guilds.cache.get(guildID);
+
+            if (!guild) {
+                return res.status(404).json({
+                    error: 'Guild not found',
+                });
             }
 
-            const guild = client.guilds.cache.get(guildID);
-            console.log(guild);
-            if (!guild)
-                return res.status(404).json({ error: 'Guild not found' });
+            // Verify the logged-in user's permissions in this guild.
+            let member;
+
+            try {
+                member = await guild.members.fetch(req.session.user.id);
+            } catch (error) {
+                if (error.code === 10007 || error.code === 10013) {
+                    return res.status(403).json({
+                        error: 'You must be a member of this server.',
+                    });
+                }
+
+                console.error('[EVENT] Member verification failed:', error);
+
+                return res.status(503).json({
+                    error: 'Could not verify your server permissions.',
+                });
+            }
+
+            const canManageGuild =
+                member.permissions.has(PermissionFlagsBits.Administrator) ||
+                member.permissions.has(PermissionFlagsBits.ManageGuild);
+
+            if (!canManageGuild) {
+                return res.status(403).json({
+                    error: 'You do not have permission to manage this server.',
+                });
+            }
+
+            const channelID = await db.get(`setEventChannel_${guildID}`);
+
+            if (!channelID) {
+                return res.status(400).json({
+                    error: 'Event channel not set for this guild.',
+                });
+            }
 
             const channel = guild.channels.cache.get(channelID);
+
             if (!channel || channel.type !== ChannelType.GuildText) {
                 return res.status(400).json({
                     error: 'Event channel not found or not a text channel',
@@ -168,10 +221,14 @@ function keepAlive(client, app) {
                 .setTimestamp();
 
             await channel.send({ embeds: [embed] });
-            res.json({ success: true });
+
+            return res.json({ success: true });
         } catch (error) {
             console.error('Error handling /event:', error);
-            res.status(500).json({ error: 'Internal server error' });
+
+            return res.status(500).json({
+                error: 'Internal server error',
+            });
         }
     });
 

@@ -1,5 +1,6 @@
 import '../../styles/navmenu.css';
 import Logo from '../../assets/Logo.png';
+import DiscordAuth from './DiscordAuth';
 
 function Navmenu() {
     return (
@@ -7,13 +8,17 @@ function Navmenu() {
             <div className="header-left">
                 <img src={Logo} alt="NazGameplay" className="nav-logo" />
             </div>
+
             <div className="header-center color-primary">
                 <h1>NazServerSecurityBot</h1>
             </div>
+
             <div className="header-right">
+                <DiscordAuth />
+
                 <a
                     className="discord-button"
-                    href="discord.gg/your-invite-link"
+                    href="https://discord.gg/your-invite-link"
                     target="_blank"
                     rel="noopener noreferrer">
                     Join Discord

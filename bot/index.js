@@ -4,6 +4,8 @@ const path = require('node:path');
 const express = require('express');
 const cors = require('cors');
 const { QuickDB } = require('quick.db');
+const session = require('express-session');
+const authRouter = require('../server/routes/auth');
 const {
     Client,
     IntentsBitField,
@@ -44,6 +46,8 @@ process.on('uncaughtException', (error) => {
 // ---------- Express Setup ----------
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(
     cors({
         origin(origin, callback) {
@@ -52,6 +56,7 @@ app.use(
                 'http://127.0.0.1:3000',
                 'http://localhost:3001',
                 'http://127.0.0.1:3001',
+                'https://nazservers.asuscomm.com',
             ]);
 
             // Local development only: allow requests without an Origin header.
@@ -62,32 +67,125 @@ app.use(
             console.error(`Blocked CORS origin: ${origin}`);
             return callback(new Error('Not allowed by CORS'));
         },
+        credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
 
+app.use(
+    session({
+        name: 'nazservers.sid',
+        secret: process.env.SESSION_SECRET,
+        proxy: true,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60 * 24,
+        },
+    })
+);
+
+app.use((req, res, next) => {
+    if (req.path === '/auth/discord' && req.method === 'GET') {
+        res.on('finish', () => {
+            console.log('[AUTH RESPONSE]', {
+                status: res.statusCode,
+                setCookie: Boolean(res.getHeader('set-cookie')),
+                secure: req.secure,
+                protocol: req.protocol,
+                forwardedProto: req.get('x-forwarded-proto'),
+                host: req.get('host'),
+            });
+        });
+    }
+    next();
+});
+
 app.use(express.json());
+
+app.use('/auth', authRouter);
 
 // Settings Router
 const settingsRouter = require('../server/routes/settings')(client);
+
 app.use('/api', settingsRouter);
+
 // Timeouts Router
 const timeoutsRouter = require('../server/routes/timeouts')(client);
 app.use('/api', timeoutsRouter);
 
 // Endpoint: Hent alle guilds botten er i
-app.get('/api/guilds', (req, res) => {
+
+app.get('/api/guilds', async (req, res) => {
     if (!client || !client.isReady()) {
-        return res.status(500).json({ error: 'Discord client is not ready' });
+        return res.status(503).json({
+            error: 'Discord client is not ready',
+        });
     }
-    const guilds = client.guilds.cache.map((g) => ({
-        id: g.id,
-        name: g.name,
-        memberCount: g.memberCount,
-        icon: g.iconURL({ size: 256, format: 'png' }) || null,
-    }));
-    res.json(guilds);
+
+    // Krev innlogget Discord-bruker.
+    if (!req.session?.user?.id) {
+        return res.status(401).json({
+            error: 'You must log in with Discord.',
+        });
+    }
+
+    try {
+        const userID = req.session.user.id;
+        const accessibleGuilds = [];
+
+        for (const guild of client.guilds.cache.values()) {
+            try {
+                // Hent bare den innloggede brukerens medlemskap.
+                const member = await guild.members.fetch(userID);
+
+                const canManageGuild =
+                    member.permissions.has('Administrator') ||
+                    member.permissions.has('ManageGuild');
+
+                if (!canManageGuild) {
+                    continue;
+                }
+
+                accessibleGuilds.push({
+                    id: guild.id,
+                    name: guild.name,
+                    memberCount: guild.memberCount,
+                    icon:
+                        guild.iconURL({
+                            size: 256,
+                            extension: 'png',
+                        }) || null,
+                });
+            } catch (err) {
+                // Brukeren er ikke medlem, eller medlemskapet kunne
+                // ikke verifiseres. Ikke vis serveren.
+                if (err.code === 10007 || err.code === 10013) {
+                    continue;
+                }
+
+                console.error(
+                    `[GUILDS ROUTE] Could not verify ${guild.id}:`,
+                    err.message
+                );
+
+                // Ikke vis serveren hvis kontrollen feiler.
+                continue;
+            }
+        }
+
+        return res.json(accessibleGuilds);
+    } catch (err) {
+        console.error('[GUILDS ROUTE ERROR]:', err);
+
+        return res.status(500).json({
+            error: 'Could not load your servers.',
+        });
+    }
 });
 
 // ---------- Load Commands ----------
@@ -277,6 +375,11 @@ client.on(Events.GuildMemberAdd, async (member) => {
 
 // ---------- Keep Alive og Oppstart ----------
 const keepAlive = require('../server/server');
+console.log(
+    '[AUTH DEBUG] Loading auth route from:',
+    require.resolve('../server/routes/auth')
+);
+console.log('[AUTH DEBUG] Express app created in bot/index.js');
 
 let servicesStarted = false;
 
